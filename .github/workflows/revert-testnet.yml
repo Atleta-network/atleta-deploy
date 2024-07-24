@@ -192,6 +192,9 @@ jobs:
       with:
         submodules: "recursive"
 
+    - name: Install system deps
+      run: sudo apt-get install jq     
+    
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh/
@@ -201,6 +204,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
 
+    - name: Authenticate GitHub CLI and download latest release of chainspec
+      run: |
+        gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+        LATEST_RELEASE=$(gh release list --repo ${{ secrets.ATLETA_REPO }} --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+        echo "${LATEST_RELEASE}"
+        gh release download "${LATEST_RELEASE}" --repo ${{ secrets.ATLETA_REPO }} --pattern "chain-spec.testnet.json" --dir chainspecs
+  
     - name: Copy files to the server
       run: |
         scp deploy/config.env ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:~/atleta/config.env

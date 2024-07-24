@@ -6,40 +6,8 @@ on:
     branches: [ "testnet" ]
 
 jobs:
-  deploy_image:
-
-    environment: testnet
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        submodules: "recursive"
-
-    - name: Set up docker buildx
-      uses: docker/setup-buildx-action@v1
-
-    - name: Login to docker hub
-      run: docker login -u atletanetwork -p ${{ secrets.REGISTRYPASS }} docker.io
-      
-    - name: Set timestamp variables
-      run: |
-          DATE=$(date +%d%m%y)
-          HMS=$(date +%H%M%S)
-          echo "DATE: $DATE, HMS: $HMS"
-
-    - name: Build and push docker image
-      run: |
-          docker build --build-arg BUILD_FEATURES=fast-runtime -t docker.io/atletanetwork/atleta-node:testnet-${DATE}-${HMS} .
-          docker tag docker.io/atletanetwork/atleta-node:testnet-${DATE}-${HMS} docker.io/atletanetwork/atleta-node:testnet-latest
-          docker push docker.io/atletanetwork/atleta-node:testnet-${DATE}-${HMS}
-          docker push docker.io/atletanetwork/atleta-node:testnet-latest
-
   deploy_public_bootnode:
 
-    needs: deploy_image
-
     environment: testnet
 
     runs-on: ubuntu-latest
@@ -49,6 +17,9 @@ jobs:
       with:
         submodules: "recursive"
 
+    - name: Install system deps
+      run: sudo apt-get install jq 
+    
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh/
@@ -57,6 +28,13 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
+
+    - name: Authenticate GitHub CLI and download latest release of chainspec
+      run: |
+        gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+        LATEST_RELEASE=$(gh release list --repo ${{ secrets.ATLETA_REPO }} --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+        echo "${LATEST_RELEASE}"
+        gh release download "${LATEST_RELEASE}" --repo ${{ secrets.ATLETA_REPO }} --pattern "chain-spec.testnet.json" --dir chainspecs
 
     - name: Copy files to the server
       run: |
@@ -77,13 +55,15 @@ jobs:
   deploy_technical_validators:
 
     runs-on: ubuntu-latest
-    needs: deploy_image
     environment: testnet
 
     steps:
     - uses: actions/checkout@v3
       with:
         submodules: "recursive"
+
+    - name: Install system deps
+      run: sudo apt-get install jq 
 
     - name: Set up SSH
       run: |
@@ -94,6 +74,13 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
 
+    - name: Authenticate GitHub CLI and download latest release of chainspec
+      run: |
+        gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+        LATEST_RELEASE=$(gh release list --repo ${{ secrets.ATLETA_REPO }} --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+        echo "${LATEST_RELEASE}"
+        gh release download "${LATEST_RELEASE}" --repo ${{ secrets.ATLETA_REPO }} --pattern "chain-spec.testnet.json" --dir chainspecs
+      
     - name: Make Keys File
       run: |
         echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > deploy/testnet.keys.env
@@ -122,7 +109,6 @@ jobs:
   deploy_validators:
 
     needs: 
-      - deploy_image
       - deploy_technical_validators # technical validators have private bootnode
 
     environment: testnet
@@ -202,35 +188,46 @@ jobs:
       with:
         submodules: "recursive"
 
+    - name: Install system deps
+      run: sudo apt-get install jq 
+
     - name: Set up SSH
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
-        ssh-keyscan ${{secrets[matrix.host_key]}} >> ~/.ssh/known_hosts
-        echo "${{secrets.SSH_PRIVATE_KEY}}" > ~/.ssh/id_rsa
+        ssh-keyscan ${{ secrets[matrix.host_key ]}} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
         ssh-add ~/.ssh/id_rsa
+
+    - name: Authenticate GitHub CLI and download latest release of chainspec
+      run: |
+        gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+        LATEST_RELEASE=$(gh release list --repo ${{ secrets.ATLETA_REPO }} --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+        echo "${LATEST_RELEASE}"
+        gh release download "${LATEST_RELEASE}" --repo ${{ secrets.ATLETA_REPO }} --pattern "chain-spec.testnet.json" --dir chainspecs
+     
 
     - name: Generate config.env
       run: |
         mkdir -p deploy
         touch deploy/config.env
-        echo "PRIVATE_KEY=${{secrets[matrix.priv_key_key]}}" >> deploy/config.env
+        echo "PRIVATE_KEY=${{ secrets[matrix.priv_key_key ]}}" >> deploy/config.env
         echo "DOCKER_IMAGE=atletanetwork/atleta-node:testnet-latest" >> deploy/config.env
-        echo "BOOTNODE_ADDRESS=${{secrets.BOOTNODE_P2P_ADDRESS}}" >> deploy/config.env
+        echo "BOOTNODE_ADDRESS=${{ secrets.BOOTNODE_P2P_ADDRESS }}" >> deploy/config.env
 
     - name: Copy files to the server
       run: |
-        scp deploy/testnet/run-validator.sh ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/run.sh
-        scp deploy/testnet/set_session_keys.js ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/set_session_keys.js
-        scp deploy/testnet/validate.js ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.js
-        scp deploy/testnet/validate.sh ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.sh
-        scp deploy/testnet/revert.sh ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/revert.sh
-        scp deploy/testnet/package.json ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/package.json
-        scp deploy/testnet/package-lock.json ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/package-lock.json
-        scp deploy/config.env ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/config.env
-        scp chainspecs/chain-spec.testnet.json ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/chainspec.json
+        scp deploy/testnet/run-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/run.sh
+        scp deploy/testnet/set_session_keys.js ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/set_session_keys.js
+        scp deploy/testnet/validate.js ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.js
+        scp deploy/testnet/validate.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.sh
+        scp deploy/testnet/revert.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/revert.sh
+        scp deploy/testnet/package.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package.json
+        scp deploy/testnet/package-lock.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package-lock.json
+        scp deploy/config.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/config.env
+        scp chainspecs/chain-spec.testnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/chainspec.json
         
 
     - name: Run the validator
@@ -240,7 +237,7 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /home/${{secrets[matrix.user_key]}}/atleta
+          cd /home/${{ secrets[matrix.user_key] }}/atleta
           ./run.sh
 
   configure_backup:
