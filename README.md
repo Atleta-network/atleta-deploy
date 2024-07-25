@@ -1,5 +1,10 @@
-Testnet Deployment
-==================
+Atleta Network Deployment
+=========================
+
+
+
+
+## Testnet
 
 We have 10 validators at the moment. 3 of them predefined in the chainspec.
 While the others are normally generated accounts.
@@ -40,7 +45,7 @@ scripts are located.
 
 
 
-## Deployment
+### Deployment
 
 The workflow is defined in `.github/workflows/deploy-testnet.yml`.
 

@@ -36,7 +36,7 @@ jobs:
 
     - name: Copy files to the server
       run: |
-        scp deploy/testnet/run-bootnode.sh ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/run.sh
+        scp testnet/run-bootnode.sh ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/run.sh
         scp chainspecs/chain-spec.testnet.json ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/chainspec.json
 
     - name: Run bootnode
@@ -81,16 +81,16 @@ jobs:
       
     - name: Make Keys File
       run: |
-        echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > deploy/testnet.keys.env
+        echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > testnet.keys.env
 
     - name: Copy Files to Server
       run: |
-        scp deploy/testnet/docker-compose.yml ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/docker-compose.yml
-        scp deploy/add-session-keys.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/add-session-keys.sh
-        scp deploy/testnet/run-technical-validators.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run.sh
-        scp deploy/testnet.keys.env ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/testnet.keys.env
+        scp testnet/docker-compose.yml ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/docker-compose.yml
+        scp add-session-keys.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/add-session-keys.sh
+        scp testnet/run-technical-validators.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run.sh
+        scp testnet.keys.env ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/testnet.keys.env
         scp chainspecs/chain-spec.testnet.json ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/chainspec.json
-        scp deploy/utils/backup_script/run_backup.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run_backup.sh
+        scp utils/backup_script/run_backup.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run_backup.sh
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.0
@@ -210,21 +210,21 @@ jobs:
     - name: Generate config.env
       run: |
         mkdir -p deploy
-        touch deploy/config.env
-        echo "PRIVATE_KEY=${{ secrets[matrix.priv_key_key ]}}" >> deploy/config.env
-        echo "DOCKER_IMAGE=atletanetwork/atleta-node:testnet-latest" >> deploy/config.env
-        echo "BOOTNODE_ADDRESS=${{ secrets.BOOTNODE_P2P_ADDRESS }}" >> deploy/config.env
+        touch config.env
+        echo "PRIVATE_KEY=${{ secrets[matrix.priv_key_key ]}}" >> config.env
+        echo "DOCKER_IMAGE=atletanetwork/atleta-node:testnet-latest" >> config.env
+        echo "BOOTNODE_ADDRESS=${{ secrets.BOOTNODE_P2P_ADDRESS }}" >> config.env
 
     - name: Copy files to the server
       run: |
-        scp deploy/testnet/run-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/run.sh
-        scp deploy/testnet/set_session_keys.js ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/set_session_keys.js
-        scp deploy/testnet/validate.js ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.js
-        scp deploy/testnet/validate.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.sh
-        scp deploy/testnet/revert.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/revert.sh
-        scp deploy/testnet/package.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package.json
-        scp deploy/testnet/package-lock.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package-lock.json
-        scp deploy/config.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/config.env
+        scp testnet/run-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/run.sh
+        scp testnet/set_session_keys.js ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/set_session_keys.js
+        scp testnet/validate.js ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.js
+        scp testnet/validate.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/validate.sh
+        scp testnet/revert.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/revert.sh
+        scp testnet/package.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package.json
+        scp testnet/package-lock.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package-lock.json
+        scp config.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/config.env
         scp chainspecs/chain-spec.testnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/chainspec.json
         
 
@@ -264,4 +264,4 @@ jobs:
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.VALIDATOR_16_USER }}@${{ secrets.VALIDATOR_16_HOST }} "mkdir -p /home/${{ secrets.VALIDATOR_16_USER }}/atleta/backup_script"
         ssh -o StrictHostKeyChecking=no ${{ secrets.VALIDATOR_16_USER }}@${{ secrets.VALIDATOR_16_HOST }} "echo ${{ secrets.GCP_S3_KEY }} > /home/${{ secrets.VALIDATOR_16_USER }}/atleta/backup_script/gcp_key.json"
-        scp deploy/utils/backup_script/run_backup.sh ${{ secrets.VALIDATOR_16_USER }}@${{ secrets.VALIDATOR_16_HOST }}:/home/${{ secrets.VALIDATOR_16_USER }}/atleta/backup_script/run_backup.sh
+        scp utils/backup_script/run_backup.sh ${{ secrets.VALIDATOR_16_USER }}@${{ secrets.VALIDATOR_16_HOST }}:/home/${{ secrets.VALIDATOR_16_USER }}/atleta/backup_script/run_backup.sh
