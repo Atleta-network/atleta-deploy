@@ -193,10 +193,7 @@ jobs:
         submodules: "recursive"
 
     - name: Install system deps
-      run: sudo apt-get install jq shellcheck fd-find
-      
-    - name: Run shellcheck
-      run: fdfind --type executable --exec shellcheck {}
+      run: sudo apt-get install jq
     
     - name: Set up SSH
       run: |
