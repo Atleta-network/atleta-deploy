@@ -49,16 +49,17 @@ scripts are located.
 
 The workflow is defined in `.github/workflows/deploy-testnet.yml`.
 
-The predefined validators are deployed on a single server. The job is called
-`deploy_technical_validators`.
+The predefined validators (i.e. from the genesis configuration) are deployed on
+a single server. The job is called `deploy_technical_validators`.
 
-The each of the rest of the validators is deployed on a dedicated server. The
-job is called `deploy_validators`.
+Each of the rest of the validators is deployed on a dedicated server. The job is
+called `deploy_validators`.
 
-While the setup of the session keys is automated for the technical
-validators, we manually run a script `set_session_keys.js` (`npm run set_keys`) to
-add them for the normal validators. Also, we manually run script `validate.js`
-(`npm run validate`) to start being a validator. Luckily, it should be done only
-once in normal circumstances. And the validators should be updated via `setCode`
-in the feature. But anyway, we should improve this workflow and automate what's
-currently done manually.
+While the setup of the session keys is automated for the genesis validators, we
+manually run the script [`validate.sh`](testnet/validate.sh) to add the keys for
+the normal validators. The script runs the node and adds the keys to the
+keystore. After keys are added, the node should be stopped and restarted using a
+normal run script (i.e. [`run-validator.sh`](testnet/run-validator.sh)).
+Luckily, it should be done only once in normal circumstances. And the validators
+should be updated via `setCode` in the feature. But anyway, we should improve
+this workflow and automate what's currently done manually.
