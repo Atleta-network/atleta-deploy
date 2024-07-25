@@ -2,8 +2,6 @@ name: Deploy Testnet
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "testnet" ]
 
 jobs:
   deploy_public_bootnode:

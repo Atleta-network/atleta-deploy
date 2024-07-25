@@ -2,8 +2,6 @@ name: Deploy Devnet
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ "devnet" ]
 
 jobs:
   deploy:
