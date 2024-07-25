@@ -1,10 +1,7 @@
 name: Deploy Devnet
 
 on:
-  workflow_run:
-    workflows: ["Lint shell scripts"]
-    types:
-      - completed
+  workflow_dispatch:
 
 jobs:
   deploy:
