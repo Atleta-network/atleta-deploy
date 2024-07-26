@@ -18,19 +18,8 @@ jobs:
       with:
         submodules: "recursive"
 
-    - name: Install system deps on Linux
-      if: ${{ runner.os == 'Linux' }}
+    - name: Install system deps
       run: sudo apt-get install shellcheck fd-find
     
-    - name: Install system deps on MacOS  
-      if: ${{ runner.os == 'MacOS' }}
-      run: brew install shellcheck fd
-
-
-    - name: Run shellcheck on Linux
-      if: ${{ runner.os == 'Linux' }}
+    - name: Run shellcheck 
       run: fdfind --type executable --exec shellcheck {}
-
-    - name: Run shellcheck on MacOS
-      if: ${{ runner.os == 'MacOS' }}
-      run: fd --type executable --exec shellcheck {}
