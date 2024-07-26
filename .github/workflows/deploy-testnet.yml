@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -40,7 +40,7 @@ jobs:
         scp chainspecs/chain-spec.testnet.json ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/chainspec.json
 
     - name: Run bootnode
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.BOOTNODE_HOST }}
         username: ${{ secrets.BOOTNODE_USER }}
@@ -56,7 +56,7 @@ jobs:
     environment: testnet
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -93,7 +93,7 @@ jobs:
         scp utils/backup_script/run_backup.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run_backup.sh
 
     - name: SSH into Server and Deploy
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.TECHNICAL_HOST }}
         username: ${{ secrets.TECHNICAL_USER }}
@@ -182,7 +182,7 @@ jobs:
             priv_key_key: VALIDATOR_16_PRIV_KEY
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -229,7 +229,7 @@ jobs:
         
 
     - name: Run the validator
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets[matrix.host_key] }}
         username: ${{ secrets[matrix.user_key] }}
@@ -247,7 +247,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
