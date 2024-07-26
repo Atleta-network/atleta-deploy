@@ -30,7 +30,7 @@ jobs:
     - name: Authenticate GitHub CLI and download latest release of chainspec
       run: |
         gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
-        LATEST_RELEASE=$(gh release list --repo ${{ secrets.ATLETA_REPO }} --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+        LATEST_RELEASE=$(gh release list --repo ${{ secrets.ATLETA_REPO }} --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet-chainspec")) | .tagName' | sort -r | head -n 1)
         echo "${LATEST_RELEASE}"
         gh release download "${LATEST_RELEASE}" --repo ${{ secrets.ATLETA_REPO }} --pattern "chain-spec.testnet.json" --dir chainspecs
 
