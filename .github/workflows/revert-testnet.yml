@@ -14,7 +14,7 @@ jobs:
   #   environment: testnet
   #
   #   steps:
-  #   - uses: actions/checkout@v3
+  #   - uses: actions/checkout@v4
   #     with:
   #       submodules: "recursive"
   #
@@ -40,7 +40,7 @@ jobs:
   #       scp chainspecs/chain-spec.testnet.json ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/chainspec.json
   #
   #   - name: SSH into Server and Deploy
-  #     uses: appleboy/ssh-action@v1.0.0
+  #     uses: appleboy/ssh-action@v1.0.3
   #     with:
   #       host: ${{ secrets.TECHNICAL_HOST }}
   #       username: ${{ secrets.TECHNICAL_USER }}
@@ -125,7 +125,7 @@ jobs:
             priv_key_key: VALIDATOR_16_PRIV_KEY
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -140,7 +140,7 @@ jobs:
         ssh-add ~/.ssh/id_rsa
 
     - name: Down
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets[matrix.host_key] }}
         username: ${{ secrets[matrix.user_key] }}
@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -168,7 +168,7 @@ jobs:
         eval $(ssh-agent)
 
     - name: Stop
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.BOOTNODE_HOST }}
         username: ${{ secrets.BOOTNODE_USER }}
@@ -188,7 +188,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -218,7 +218,7 @@ jobs:
         scp testnet/revert.sh ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:~/atleta/revert.sh
 
     - name: Revert
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.BOOTNODE_HOST }}
         username: ${{ secrets.BOOTNODE_USER }}
@@ -305,7 +305,7 @@ jobs:
             priv_key_key: VALIDATOR_16_PRIV_KEY
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -334,7 +334,7 @@ jobs:
         scp chainspecs/chain-spec.testnet.json ${{secrets[matrix.user_key]}}@${{secrets[matrix.host_key]}}:/home/${{ secrets[matrix.user_key] }}/atleta/chainspec.json
 
     - name: Revert
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets[matrix.host_key] }}
         username: ${{ secrets[matrix.user_key] }}

@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         submodules: "recursive"
 
@@ -38,7 +38,7 @@ jobs:
         scp chainspecs/chain-spec.devnet.json ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/chainspec.json
         
     - name: SSH into Server and Deploy
-      uses: appleboy/ssh-action@v1.0.0
+      uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.DEVNET_HOST }}
         username: ${{ secrets.DEVNET_USERNAME }}
