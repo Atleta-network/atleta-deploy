@@ -29,6 +29,8 @@ services:
     volumes:
       - ./chain-data/diego:/chain-data
       - ./chainspec.json:/chainspec.json
+    env_file:
+      - ./node-keys.env
     command: >
       --chain /chainspec.json
       --base-path /chain-data
@@ -40,7 +42,7 @@ services:
       --validator
       --state-pruning archive
       --allow-private-ipv4
-      --unsafe-force-node-key-generation
+      --node-key "$DIEGO_NODE_KEY_PRIV"
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9955:9944"
@@ -54,6 +56,8 @@ services:
     volumes:
       - ./chain-data/pele:/chain-data
       - ./chainspec.json:/chainspec.json
+    env_file:
+      - ./node-keys.env
     command: >
       --chain /chainspec.json
       --base-path /chain-data
@@ -65,7 +69,7 @@ services:
       --validator
       --state-pruning archive
       --allow-private-ipv4
-      --unsafe-force-node-key-generation
+      --node-key "$PELE_NODE_KEY_PRIV"
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9966:9944"
@@ -79,6 +83,8 @@ services:
     volumes:
       - ./chain-data/franz:/chain-data
       - ./chainspec.json:/chainspec.json
+    env_file:
+      - ./node-keys.env
     command: >
       --chain /chainspec.json
       --base-path /chain-data
@@ -90,7 +96,7 @@ services:
       --validator
       --state-pruning archive
       --allow-private-ipv4
-      --unsafe-force-node-key-generation
+      --node-key "$FRANZ_NODE_KEY_PRIV"
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9977:9944"
