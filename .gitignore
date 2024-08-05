@@ -21,3 +21,5 @@ deploy/testnet/config.env
 deploy/testnet/chainspec.json
 testenv
 exported.blocks
+testnet/node-keys.env
+testnet/chainspec.json

@@ -88,6 +88,7 @@ jobs:
         echo "DIEGO_NODE_KEY_PUB=${{ secrets.DIEGO_NODE_KEY_PUB }}" >> node-keys.env
         echo "FRANZ_NODE_KEY_PUB=${{ secrets.FRANZ_NODE_KEY_PUB }}" >> node-keys.env
         echo "PELE_NODE_KEY_PUB=${{ secrets.PELE_NODE_KEY_PUB }}" >> node-keys.env
+        echo "RESERVED_NODES=\"${{ secrets.RESERVED_NODES }}\"" >> node-keys.env
 
     - name: Copy Files to Server
       run: |

@@ -26,7 +26,7 @@ rpc_api_endpoint="http://127.0.0.1:9944"
 
 check_chainspec() {
     if [ ! -f "$chainspec" ]; then
-        printf "\033[31mError: Chainspec file not found.\033[0m\n"
+        printf "\033[31mError: Chains:e pec file not found.\033[0m\n"
         exit 1
     fi
 }
