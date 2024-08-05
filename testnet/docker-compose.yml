@@ -98,7 +98,7 @@ services:
       --state-pruning archive
       --allow-private-ipv4
       --node-key "$FRANZ_NODE_KEY_PRIV"
-      --port 30555
+      --port 30666
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9977:9944"
