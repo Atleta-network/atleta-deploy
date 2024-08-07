@@ -13,6 +13,8 @@
 # BOOTNODE_ADDRESS=<node address in libp2p form>
 # PRIVATE_KEY=<key in hex>
 # DOCKER_IMAGE=<image name>
+# PRIVATE_NODE_KEY=<key>
+# PUBLIC_NODE_KEY=<key>
 
 set -u
 
@@ -56,7 +58,7 @@ start_node() {
         --chain "/chainspec.json" \
         --validator \
         --name "Atleta Validator" \
-        --unsafe-force-node-key-generation \
+        --node-key "$PRIVATE_NODE_KEY" \
         --bootnodes "$BOOTNODE_ADDRESS" \
         --base-path /chain-data \
         --rpc-port 9944 \

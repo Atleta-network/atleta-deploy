@@ -11,7 +11,7 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-docker compose up -d
+docker compose --env-file node-keys.env up -d
 
 sleep 30
 

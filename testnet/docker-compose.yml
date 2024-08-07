@@ -8,14 +8,13 @@ services:
     volumes:
       - ./chain-data/bootnode:/chain-data
       - ./chainspec.json:/chainspec.json
-    command: >
-      --chain /chainspec.json
-      --base-path /chain-data
-      --node-key 66d0f50a1293fb0e042b409ae0715b8e82bb6d01528e164c6694fa6fc876d585
-      --name bootnode
-      --state-pruning archive
-      --allow-private-ipv4
-      --listen-addr /ip4/0.0.0.0/tcp/30333
+      - ./bootnode-entrypoint.sh:/entrypoint.sh
+    env_file:
+      - ./node-keys.env
+    entrypoint: ["/entrypoint.sh"]
+    environment:
+      - NODE_KEY=66d0f50a1293fb0e042b409ae0715b8e82bb6d01528e164c6694fa6fc876d585
+      - RESERVED_NODES=${RESERVED_NODES}
     ports:
       - "0.0.0.0:30333:30333"
     networks:
@@ -29,6 +28,8 @@ services:
     volumes:
       - ./chain-data/diego:/chain-data
       - ./chainspec.json:/chainspec.json
+    env_file:
+      - node-keys.env
     command: >
       --chain /chainspec.json
       --base-path /chain-data
@@ -40,7 +41,8 @@ services:
       --validator
       --state-pruning archive
       --allow-private-ipv4
-      --unsafe-force-node-key-generation
+      --node-key "$DIEGO_NODE_KEY_PRIV"
+      --port 30444
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9955:9944"
@@ -54,6 +56,8 @@ services:
     volumes:
       - ./chain-data/pele:/chain-data
       - ./chainspec.json:/chainspec.json
+    env_file:
+      - node-keys.env
     command: >
       --chain /chainspec.json
       --base-path /chain-data
@@ -65,7 +69,8 @@ services:
       --validator
       --state-pruning archive
       --allow-private-ipv4
-      --unsafe-force-node-key-generation
+      --node-key "$PELE_NODE_KEY_PRIV"
+      --port 30555
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9966:9944"
@@ -79,6 +84,8 @@ services:
     volumes:
       - ./chain-data/franz:/chain-data
       - ./chainspec.json:/chainspec.json
+    env_file:
+      - node-keys.env
     command: >
       --chain /chainspec.json
       --base-path /chain-data
@@ -90,7 +97,8 @@ services:
       --validator
       --state-pruning archive
       --allow-private-ipv4
-      --unsafe-force-node-key-generation
+      --node-key "$FRANZ_NODE_KEY_PRIV"
+      --port 30666
       --bootnodes /ip4/172.16.238.10/tcp/30333/p2p/12D3KooWHqMEWZUKja1mj2P5o7nkXSrQg7MS5vtcTgmfsp6o4bvp
     ports:
       - "127.0.0.1:9977:9944"
