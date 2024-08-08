@@ -1,0 +1,35 @@
+name: Upgrade runtime Devnet
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upgrade_runtime:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install jq 
+ 
+    - name: Authenticate GitHub CLI and download latest release of runtime
+      env: 
+        GH_TOKEN: ${{ github.token }}
+      run: |
+        LATEST_RUNTIME=$(gh --repo atleta-network/atleta release list --json 'createdAt,tagName' --jq 'map(select(.tagName | startswith("release-runtime-devnet"))) | sort_by(.createdAt) | last | .tagName')
+        echo "${LATEST_RUNTIME}"
+        gh --repo Atleta-network/atleta release download "${LATEST_RUNTIME}" --pattern "atleta_runtime.compact.compressed.wasm" --dir ./utils/set-code
+       
+    - name: Node.js install
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    - name: Upgrade WASM
+      working-directory: ./utils/set-code
+      run: |
+          npm install
+          node index.js ws://${{ secrets.DEVNET_HOST }}:9944 ${{ secrets.DEVNET_ALITH_PRIV_KEY }} atleta_runtime.compact.compressed.wasm
+
