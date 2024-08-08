@@ -18,15 +18,18 @@ jobs:
       env: 
         GH_TOKEN: ${{ github.token }}
       run: |
-        LATEST_RUNTIME=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt | jq -r '.[] | select(.tagName | startswith("release-runtime-devnet")) | .tagName')
+        LATEST_RUNTIME=$(gh release list --repo atleta-network/atleta --json 'createdAt,tagName' --jq '[.[] | select(.tagName | startswith("release-runtime-devnet"))] | sort_by(.createdAt) | last | .tagName')
         echo "${LATEST_RUNTIME}"
-        gh release download "${LATEST_RUNTIME}" --repo Atleta-network/atleta --pattern "atleta_runtime.compact.compressed.wasm" --dir ./utils/set-code
+        gh --repo Atleta-network/atleta release download "${LATEST_RUNTIME}" --pattern "atleta_runtime.compact.compressed.wasm" --dir ./utils/set-code
        
-    - name: Upgrade WASM
+    - name: Node.js install
       uses: actions/setup-node@v4
       with:
         node-version: 18
-    - run: |
+
+    - name: Upgrade WASM
+      working-directory: ./utils/set-code
+      run: |
           npm install
           node index.js ws://${{ secrets.DEVNET_HOST }}:9944 ${{ secrets.DEVNET_ALITH_PRIV_KEY }} atleta_runtime.compact.compressed.wasm
-      working-directory: ./utils/set-code
+
