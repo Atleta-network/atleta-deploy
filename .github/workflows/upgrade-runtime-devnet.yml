@@ -18,7 +18,7 @@ jobs:
       env: 
         GH_TOKEN: ${{ github.token }}
       run: |
-        LATEST_RUNTIME=$(gh release list --repo atleta-network/atleta --json 'createdAt,tagName' --jq '[.[] | select(.tagName | startswith("release-runtime-devnet"))] | sort_by(.createdAt) | last | .tagName')
+        LATEST_RUNTIME=$(gh --repo atleta-network/atleta release list --json 'createdAt,tagName' --jq 'map(select(.tagName | startswith("release-runtime-devnet"))) | sort_by(.createdAt) | last | .tagName')
         echo "${LATEST_RUNTIME}"
         gh --repo Atleta-network/atleta release download "${LATEST_RUNTIME}" --pattern "atleta_runtime.compact.compressed.wasm" --dir ./utils/set-code
        
