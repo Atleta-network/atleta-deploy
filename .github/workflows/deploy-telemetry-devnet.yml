@@ -1,0 +1,49 @@
+name: Deploy Telemetry for Devnet
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+
+    - name: Install system deps
+      run: sudo apt-get install gettext
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets.TELEMETRY_HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.TELEMETRY_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    - name: Substitute environment variables
+      run: |
+        export TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}
+        export DEVNET_HOST=${{ secrets.DEVNET_HOST }}
+        envsubst < utils/telemetry/docker-compose.yml > utils/telemetry/docker-compose.fill.yml
+        envsubst < utils/telemetry/prometheus/prometheus.yml > utils/telemetry/prometheus/prometheus.fill.yml
+
+    - name: Copy Files to Server
+      run: |
+        scp utils/telemetry/docker-compose.fill.yml ${{ secrets.TELEMETRY_USERNAME }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/docker-compose.yml
+        scp utils/telemetry/prometheus/prometheus.fill.yml ${{ secrets.TELEMETRY_USERNAME }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/prometheus/prometheus.yml
+        
+    - name: SSH into Server and Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.TELEMETRY_HOST }}
+        username: ${{ secrets.TELEMETRY_USERNAME }}
+        key: ${{ secrets.TELEMETRY_PRIVATE_KEY }}
+        script: |
+          cd /sportchain
+          docker compose down
+          docker compose pull
+          docker compose up -d --build --remove-orphans
