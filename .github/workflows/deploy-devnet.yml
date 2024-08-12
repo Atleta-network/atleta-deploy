@@ -12,7 +12,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install system deps
-      run: sudo apt-get install jq 
+      run: sudo apt-get install jq gettext
  
     - name: Set up SSH
       run: |
@@ -30,9 +30,14 @@ jobs:
         echo "${LATEST_RELEASE}"
         gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.devnet.json" --dir chainspecs
 
+    - name: Substitute environment variables
+      run: |
+        export DEVNET_HOST=${{ secrets.DEVNET_HOST }}
+        envsubst < devnet/docker-compose.yml > devnet/docker-compose.fill.yml
+
     - name: Copy Files to Server
       run: |
-        scp devnet/docker-compose.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker-compose.yml
+        scp devnet/docker-compose.fill.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker-compose.yml
         scp chainspecs/chain-spec.devnet.json ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/chainspec.json
         
     - name: SSH into Server and Deploy
