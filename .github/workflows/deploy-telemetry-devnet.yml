@@ -24,8 +24,9 @@ jobs:
         eval $(ssh-agent)
 
     - name: Substitute environment variables
+      env:
+        DEVNET_HOST: ${{ secrets.DEVNET_HOST }}
       run: |
-        export DEVNET_HOST=${{ secrets.DEVNET_HOST }}
         envsubst < utils/telemetry/docker-compose.yml > utils/telemetry/docker-compose.fill.yml
         envsubst < utils/telemetry/prometheus/prometheus.yml > utils/telemetry/prometheus/prometheus.fill.yml
 
@@ -44,4 +45,4 @@ jobs:
           cd /sportchain/telemetry
           docker compose down
           docker compose pull
-          docker compose up -d --build --remove-orphans
+          docker compose up --detach --build --remove-orphans
