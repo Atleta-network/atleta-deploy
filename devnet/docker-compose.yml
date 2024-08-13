@@ -4,6 +4,8 @@ services:
   archive_node:
     image: atletanetwork/atleta-node:devnet-latest
     container_name: sportchain-archive-node
+    env_file:
+      - ./docker_conf.env
     restart: always
     volumes:
       - ./chain-data/archive:/chain-data
