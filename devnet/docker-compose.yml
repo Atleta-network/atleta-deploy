@@ -26,6 +26,7 @@ services:
     ports:
       - "0.0.0.0:9944:9944/tcp"
       - "0.0.0.0:30333:30333/tcp"
+      - "0.0.0.0:9615:9615/tcp"
     networks:
       - sportchain-node-network
 
@@ -72,6 +73,15 @@ services:
       --unsafe-force-node-key-generation
       --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWEyoppNCUx8Yx66oV9fJnriXwCcXwDDUA2kj6vnc6iDEp
       --telemetry-url 'ws://${DEVNET_HOST}:8001/submit 0'
+    networks:
+      - sportchain-node-network
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    restart: always
+    ports:
+      - "9100:9100"
     networks:
       - sportchain-node-network
 
