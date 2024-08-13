@@ -12,9 +12,9 @@ services:
     environment:
       SUBSTRATE_TELEMETRY_URL: ws://${DEVNET_HOST}:8000/feed
     ports:
-      - 80:8000
+      - 8081:8000
     expose:
-      - 80
+      - 8081
     restart: unless-stopped
     networks:
       - telemetry-network
