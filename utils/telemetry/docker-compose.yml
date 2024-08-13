@@ -4,6 +4,8 @@ services:
   telemetry-frontend:
     image: parity/substrate-telemetry-frontend
     container_name: telemetry-frontend
+    env_file:
+      - ./docker_conf.env
     read_only: true
     tmpfs:
       - /var/cache/nginx:uid=101,gid=101

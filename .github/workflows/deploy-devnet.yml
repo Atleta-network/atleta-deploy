@@ -30,14 +30,15 @@ jobs:
         echo "${LATEST_RELEASE}"
         gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.devnet.json" --dir chainspecs
 
-    - name: Substitute environment variables
+    - name: Generate config.env
       run: |
-        export DEVNET_HOST=${{ secrets.DEVNET_HOST }}
-        envsubst < devnet/docker-compose.yml > devnet/docker-compose.fill.yml
+        touch devnet/docker_conf.env
+        echo "DEVNET_HOST=${{ secrets.DEVNET_HOST }}" >> devnet/docker_conf.env
 
     - name: Copy Files to Server
       run: |
-        scp devnet/docker-compose.fill.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker-compose.yml
+        scp devnet/docker-compose.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker-compose.yml
+        scp devnet/docker_conf.env ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker_conf.env
         scp chainspecs/chain-spec.devnet.json ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/chainspec.json
         
     - name: SSH into Server and Deploy
