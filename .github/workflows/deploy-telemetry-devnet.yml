@@ -50,4 +50,4 @@ jobs:
           cd /sportchain/telemetry
           docker compose down
           docker compose pull
-          docker compose up --detach --build --remove-orphans
+          docker compose --env-file docker_conf.env up --detach --build --remove-orphans

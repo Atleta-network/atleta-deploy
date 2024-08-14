@@ -51,4 +51,4 @@ jobs:
           cd /sportchain
           docker compose down
           docker compose pull
-          docker compose up -d --build --remove-orphans
+          docker compose --env-file docker_conf.env up --detach --build --remove-orphans
