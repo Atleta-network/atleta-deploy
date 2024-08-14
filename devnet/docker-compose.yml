@@ -35,6 +35,8 @@ services:
   validator_1:
     image: atletanetwork/atleta-node:devnet-latest
     container_name: sportchain-validator-1
+    env_file:
+      - ./docker_conf.env
     restart: always
     depends_on:
       - archive_node
@@ -58,6 +60,8 @@ services:
   validator_2:
     image: atletanetwork/atleta-node:devnet-latest
     container_name: sportchain-validator-2
+    env_file:
+      - ./docker_conf.env
     restart: always
     depends_on:
       - archive_node
