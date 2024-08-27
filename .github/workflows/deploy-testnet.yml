@@ -226,7 +226,7 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install system deps
-      run: sudo apt-get install jq 
+      run: sudo apt-get install jq gettext
 
     - name: Set up SSH
       run: |
@@ -255,6 +255,12 @@ jobs:
         echo "PRIVATE_NODE_KEY=${{ secrets[matrix.priv_node_key ] }}" >> config.env
         echo "PUBLIC_NODE_KEY=${{ secrets[matrix.pub_node_key ] }}" >> config.env
 
+    - name: Substitute environment variables
+      env:
+        LOKI_HOST: ${{ secrets.LOKI_HOST }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > utils/telemetry/promtail/promtail-config.fill.yml      
+
     - name: Copy files to the server
       run: |
         scp testnet/run-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/run.sh
@@ -266,6 +272,8 @@ jobs:
         scp testnet/package-lock.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/package-lock.json
         scp config.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/config.env
         scp chainspecs/chain-spec.testnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/chainspec.json
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /home/${{ secrets[matrix.user_key] }}/atleta/promtail"
+        scp testnet/promtail/promtail-config.fill.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/atleta/promtail/promtail-config.fill.yml
         
 
     - name: Run the validator

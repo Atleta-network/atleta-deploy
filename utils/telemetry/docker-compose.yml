@@ -83,9 +83,9 @@ services:
     container_name: loki
     ports:
       - "3100:3100"
-    command: -config.file=/etc/config/loki-config.yaml
+    command: -config.file=/etc/config/loki-config.yml
     volumes:
-      - ./loki/loki-config.yaml:/etc/config/loki-config.yaml
+      - ./loki/loki-config.yml:/etc/config/loki-config.yml
     networks:
       - telemetry-network
 
@@ -93,10 +93,10 @@ services:
     image: grafana/promtail:latest
     container_name: promtail
     volumes:
-      - ./promtail/promtail-config.yaml:/etc/config/promtail-config.yaml
+      - ./promtail/promtail-config.yml:/etc/config/promtail-config.yml
       - /var/log:/var/log
       - /var/run/docker.sock:/var/run/docker.sock
-    command: -config.file=/etc/config/promtail-config.yaml
+    command: -config.file=/etc/config/promtail-config.yml
     networks:
       - telemetry-network
 
