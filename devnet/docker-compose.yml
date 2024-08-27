@@ -91,6 +91,18 @@ services:
     networks:
       - sportchain-node-network
 
+  process_exporter:
+    image: ncabatoff/process-exporter:latest
+    container_name: process_exporter
+    volumes:
+      - ./process-exporter/process-exporter.yml:/config/process-exporter.yml:ro
+      - /proc:/host/proc:ro
+    command:
+      - "--config.path=/config/process-exporter.yml"
+      - "--procfs=/host/proc"
+    ports:
+      - "9256:9256"
+
 networks:
   sportchain-node-network:
     name: sportchain-node

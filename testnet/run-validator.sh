@@ -22,6 +22,7 @@ source ./config.env
 
 container_atleta="honest_worker"
 container_node_exporter="node_exporter"
+container_process_exporter="process_exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
@@ -45,16 +46,6 @@ maybe_cleanup() {
         docker rm "$container_atleta"
     fi
 
-    if [ "$(docker ps -q -f name=$container_promtail)" ]; then
-        echo "Stopping existing container..."
-        docker stop "$container_promtail"
-    fi
-
-    if [ "$(docker ps -aq -f name=$container_promtail)" ]; then
-        echo "Removing existing container..."
-        docker rm "$container_promtail"
-    fi
-
     if [ "$(docker ps -q -f name=$container_node_exporter)" ]; then
         echo "Stopping existing container..."
         docker stop "$container_node_exporter"
@@ -64,6 +55,26 @@ maybe_cleanup() {
         echo "Removing existing container..."
         docker rm "$container_node_exporter"
     fi
+
+    if [ "$(docker ps -q -f name=$container_process_exporter)" ]; then
+        echo "Stopping existing container..."
+        docker stop "$container_process_exporter"
+    fi
+
+    if [ "$(docker ps -aq -f name=$container_process_exporter)" ]; then
+        echo "Removing existing container..."
+        docker rm "$container_process_exporter"
+    fi    
+
+    if [ "$(docker ps -q -f name=$container_promtail)" ]; then
+        echo "Stopping existing container..."
+        docker stop "$container_promtail"
+    fi
+
+    if [ "$(docker ps -aq -f name=$container_promtail)" ]; then
+        echo "Removing existing container..."
+        docker rm "$container_promtail"
+    fi    
 }
 
 start_node() {
@@ -107,6 +118,19 @@ echo "Starting the node_exporter..."
         prom/node-exporter:latest
 }
 
+start_process_exporter() {
+
+echo "Starting the process_exporter..."
+    docker pull ncabatoff/process-exporter:latest
+    docker run -d --name "$container_process_exporter" \
+        -v "$(pwd)/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
+        -v /proc:/host/proc:ro \
+        -p 9256:9256 \
+        ncabatoff/process-exporter:latest \
+        --config.path=/config/process-exporter.yml \
+        --procfs=/host/proc
+}
+
 start_promtail() {
 
 echo "Starting the promtail..."
@@ -148,6 +172,7 @@ check_chainspec
 maybe_cleanup
 start_node
 start_node_exporter
+start_process_exporter
 start_promtail
 wait_availability
 
