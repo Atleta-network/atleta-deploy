@@ -20,7 +20,9 @@ set -u
 
 source ./config.env
 
-container_name="honest_worker"
+container_atleta="honest_worker"
+container_node_exporter="node_exporter"
+container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
 
@@ -33,25 +35,46 @@ check_chainspec() {
 
 maybe_cleanup() {
 
-    if [ "$(docker ps -q -f name=$container_name)" ]; then
+    if [ "$(docker ps -q -f name=$container_atleta)" ]; then
         echo "Stopping existing container..."
-        docker stop $container_name
+        docker stop "$container_atleta"
     fi
 
-    if [ "$(docker ps -aq -f name=$container_name)" ]; then
+    if [ "$(docker ps -aq -f name=$container_atleta)" ]; then
         echo "Removing existing container..."
-        docker rm $container_name
+        docker rm "$container_atleta"
+    fi
+
+    if [ "$(docker ps -q -f name=$container_promtail)" ]; then
+        echo "Stopping existing container..."
+        docker stop "$container_promtail"
+    fi
+
+    if [ "$(docker ps -aq -f name=$container_promtail)" ]; then
+        echo "Removing existing container..."
+        docker rm "$container_promtail"
+    fi
+
+    if [ "$(docker ps -q -f name=$container_node_exporter)" ]; then
+        echo "Stopping existing container..."
+        docker stop "$container_node_exporter"
+    fi
+
+    if [ "$(docker ps -aq -f name=$container_node_exporter)" ]; then
+        echo "Removing existing container..."
+        docker rm "$container_node_exporter"
     fi
 }
 
 start_node() {
     echo "Starting the validator node..."
     docker pull "$DOCKER_IMAGE"
-    docker run -d --name "$container_name" \
+    docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
         -v "$(pwd)/chain-data":"/chain-data" \
         -p 30333:30333 \
         -p 9944:9944 \
+        -p 9615:9615 \
         --platform linux/amd64 \
         --restart always \
         "$DOCKER_IMAGE" \
@@ -65,6 +88,7 @@ start_node() {
         --unsafe-rpc-external \
         --rpc-methods=safe \
         --prometheus-external \
+        --prometheus-port 9615 \
         --rpc-cors all \
         --allow-private-ipv4 \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
@@ -72,6 +96,28 @@ start_node() {
         --enable-log-reloading \
         --max-runtime-instances 32 \
         --rpc-max-connections 10000
+}
+
+start_node_exporter() {
+
+echo "Starting the node_exporter..."
+    docker pull prom/node-exporter:latest
+    docker run -d --name "$container_node_exporter" \
+        -p 9100:9100 \
+        prom/node-exporter:latest
+}
+
+start_promtail() {
+
+echo "Starting the promtail..."
+    docker pull grafana/promtail:latest
+    docker run -d --name "$container_promtail" \
+         -p 9080:9080 \
+         -v $(pwd)/promtail/promtail-config.yaml:/etc/config/promtail-config.yaml \
+         -v /var/log:/var/log \
+         -v /var/run/docker.sock:/var/run/docker.sock \
+         grafana/promtail:latest \
+         -config.file=/etc/config/promtail-config.yaml
 }
 
 wait_availability() {
@@ -101,6 +147,8 @@ wait_availability() {
 check_chainspec
 maybe_cleanup
 start_node
+start_node_exporter
+start_promtail
 wait_availability
 
 # the rest is done via js

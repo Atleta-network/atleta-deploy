@@ -69,10 +69,34 @@ services:
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
+    environment:
+      - GF_INSTALL_PLUGINS=marcusolsson-treemap-panel
     ports:
       - "3000:3000"
     volumes:
       - grafana-data:/var/lib/grafana
+    networks:
+      - telemetry-network
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/config/loki-config.yaml
+    volumes:
+      - ./loki/loki-config.yaml:/etc/config/loki-config.yaml
+    networks:
+      - telemetry-network
+
+  promtail:
+    image: grafana/promtail:latest
+    container_name: promtail
+    volumes:
+      - ./promtail/promtail-config.yaml:/etc/config/promtail-config.yaml
+      - /var/log:/var/log
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/config/promtail-config.yaml
     networks:
       - telemetry-network
 

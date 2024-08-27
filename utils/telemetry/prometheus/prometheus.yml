@@ -8,8 +8,6 @@ scrape_configs:
 
   - job_name: 'devnet'
     static_configs:
-      - targets: ['${DEVNET_HOST}:9615']
-
-  - job_name: 'node_exporter'
-    static_configs:
-      - targets: ['${DEVNET_HOST}:9100']
+      - targets: ['${DEVNET_HOST}:9615', '${DEVNET_HOST}:9100']
+        labels:
+          host: '${DEVNET_HOST}'
