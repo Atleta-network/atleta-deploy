@@ -113,11 +113,11 @@ echo "Starting the promtail..."
     docker pull grafana/promtail:latest
     docker run -d --name "$container_promtail" \
          -p 9080:9080 \
-         -v $(pwd)/promtail/promtail-config.yaml:/etc/config/promtail-config.yaml \
+         -v "$(pwd)/promtail/promtail-config.yml:/etc/config/promtail-config.yml" \
          -v /var/log:/var/log \
          -v /var/run/docker.sock:/var/run/docker.sock \
          grafana/promtail:latest \
-         -config.file=/etc/config/promtail-config.yaml
+         -config.file=/etc/config/promtail-config.yml
 }
 
 wait_availability() {
