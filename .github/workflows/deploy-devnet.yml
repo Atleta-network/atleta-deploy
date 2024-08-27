@@ -40,6 +40,8 @@ jobs:
         scp devnet/docker-compose.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker-compose.yml
         scp devnet/docker_conf.env ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker_conf.env
         scp chainspecs/chain-spec.devnet.json ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/chainspec.json
+        ssh -o StrictHostKeyChecking=no ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }} "mkdir -p /sportchain/process-exporter"
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/process-exporter/process-exporter.yml
         
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
