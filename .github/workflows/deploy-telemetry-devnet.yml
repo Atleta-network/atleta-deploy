@@ -6,6 +6,7 @@ on:
 jobs:
   deploy:
 
+    environment: testnet
     runs-on: ubuntu-latest
 
     steps:
@@ -23,13 +24,36 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
 
-    - name: Substitute environment variables
+    - name: Substitute environment variables 
       env:
-        DEVNET_HOST: ${{ secrets.DEVNET_HOST }}
         LOKI_HOST: ${{ secrets.LOKI_HOST }}
       run: |
-        envsubst < utils/telemetry/prometheus/prometheus.yml > utils/telemetry/prometheus/prometheus.fill.yml
         envsubst < utils/telemetry/promtail/promtail-config.yml > utils/telemetry/promtail/promtail-config.fill.yml
+
+    - name: Generate Prometheus config
+      env:
+        VALIDATOR_1_HOST: ${{ secrets.VALIDATOR_1_HOST }}
+        VALIDATOR_2_HOST: ${{ secrets.VALIDATOR_2_HOST }}
+        VALIDATOR_3_HOST: ${{ secrets.VALIDATOR_3_HOST }}
+        VALIDATOR_4_HOST: ${{ secrets.VALIDATOR_4_HOST }}
+        VALIDATOR_5_HOST: ${{ secrets.VALIDATOR_5_HOST }}
+        VALIDATOR_6_HOST: ${{ secrets.VALIDATOR_6_HOST }}
+        VALIDATOR_7_HOST: ${{ secrets.VALIDATOR_7_HOST }}
+        VALIDATOR_8_HOST: ${{ secrets.VALIDATOR_8_HOST }}
+        VALIDATOR_9_HOST: ${{ secrets.VALIDATOR_9_HOST }}
+        VALIDATOR_10_HOST: ${{ secrets.VALIDATOR_10_HOST }}
+        VALIDATOR_11_HOST: ${{ secrets.VALIDATOR_11_HOST }}
+        VALIDATOR_12_HOST: ${{ secrets.VALIDATOR_12_HOST }}
+        VALIDATOR_13_HOST: ${{ secrets.VALIDATOR_13_HOST }}
+        VALIDATOR_14_HOST: ${{ secrets.VALIDATOR_14_HOST }}
+        VALIDATOR_15_HOST: ${{ secrets.VALIDATOR_15_HOST }}
+        VALIDATOR_16_HOST: ${{ secrets.VALIDATOR_16_HOST }}
+        DEVNET_HOST: ${{ secrets.DEVNET_HOST }}
+      run: |
+        cd utils/telemetry/prometheus
+        chmod +x generate_prometheus_config.sh
+        ./generate_prometheus_config.sh
+        envsubst < prometheus_template.yml > prometheus.yml 
 
     - name: Generate config.env
       run: |
@@ -43,7 +67,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }} "mkdir -p /sportchain/telemetry/prometheus"
         ssh -o StrictHostKeyChecking=no ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }} "mkdir -p /sportchain/telemetry/loki"
         ssh -o StrictHostKeyChecking=no ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }} "mkdir -p /sportchain/telemetry/promtail"
-        scp utils/telemetry/prometheus/prometheus.fill.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/prometheus/prometheus.yml
+        scp utils/telemetry/prometheus/prometheus.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/prometheus/prometheus.yml
         scp utils/telemetry/loki/loki-config.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/loki/loki-config.yml
         scp utils/telemetry/promtail/promtail-config.fill.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/promtail/promtail-config.yml
 
