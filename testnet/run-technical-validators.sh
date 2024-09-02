@@ -3,15 +3,16 @@
 set -u
 
 keys_file=$1
+node_keys_file=$2
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
     printf "\033[31m"
     echo "Error: wrong number of arguments"
     printf "\033[0m"
     exit 1
 fi
 
-docker compose --env-file node-keys.env up -d
+docker compose --env-file "$node_keys_file" up -d
 
 sleep 30
 

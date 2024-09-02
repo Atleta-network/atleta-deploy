@@ -21,10 +21,9 @@ install_docker() {
 }
 
 install_nodejs() {
-    cd ~ || exit
-    curl -sL https://deb.nodesource.com/setup_18.x -o /tmp/nodesource_setup.sh
-    sudo bash /tmp/nodesource_setup.sh
-    sudo apt install nodejs
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+    source ~/.bashrc
+    nvm install --lts
 }
 
 prepare_directory_structure() {

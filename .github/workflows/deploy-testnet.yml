@@ -4,48 +4,48 @@ on:
   workflow_dispatch:
 
 jobs:
-  deploy_public_bootnode:
+  # deploy_public_bootnode:
 
-    environment: testnet
+  #   environment: testnet
 
-    runs-on: ubuntu-latest
+  #   runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+  #   steps:
+  #   - uses: actions/checkout@v4
 
-    - name: Install system deps
-      run: sudo apt-get install jq
-    
-    - name: Set up SSH
-      run: |
-        mkdir -p ~/.ssh/
-        touch ~/.ssh/known_hosts
-        ssh-keyscan ${{ secrets.BOOTNODE_HOST }} >> ~/.ssh/known_hosts
-        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-        chmod 600 ~/.ssh/id_rsa
-        eval $(ssh-agent)
+  #   - name: Install system deps
+  #     run: sudo apt-get install jq
+  #   
+  #   - name: Set up SSH
+  #     run: |
+  #       mkdir -p ~/.ssh/
+  #       touch ~/.ssh/known_hosts
+  #       ssh-keyscan ${{ secrets.BOOTNODE_HOST }} >> ~/.ssh/known_hosts
+  #       echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+  #       chmod 600 ~/.ssh/id_rsa
+  #       eval $(ssh-agent)
 
-    - name: Authenticate GitHub CLI and download latest release of chainspec
-      run: |
-        gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
-        LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet-chainspec")) | .tagName' | sort -r | head -n 1)
-        echo "${LATEST_RELEASE}"
-        gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
+  #   - name: Authenticate GitHub CLI and download latest release of chainspec
+  #     run: |
+  #       gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+  #       LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet-chainspec")) | .tagName' | sort -r | head -n 1)
+  #       echo "${LATEST_RELEASE}"
+  #       gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
 
-    - name: Copy files to the server
-      run: |
-        scp testnet/run-bootnode.sh ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/run.sh
-        scp chainspecs/chain-spec.testnet.json ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/chainspec.json
+  #   - name: Copy files to the server
+  #     run: |
+  #       scp testnet/run-bootnode.sh ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/run.sh
+  #       scp chainspecs/chain-spec.testnet.json ${{ secrets.BOOTNODE_USER }}@${{ secrets.BOOTNODE_HOST }}:~/atleta/chainspec.json
 
-    - name: Run bootnode
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.BOOTNODE_HOST }}
-        username: ${{ secrets.BOOTNODE_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        script: |
-          cd ~/atleta
-          ./run.sh "atletanetwork/atleta-node:testnet-latest" ${{ secrets.BOOTNODE_P2P_ADDRESS }}
+  #   - name: Run bootnode
+  #     uses: appleboy/ssh-action@v1.0.3
+  #     with:
+  #       host: ${{ secrets.BOOTNODE_HOST }}
+  #       username: ${{ secrets.BOOTNODE_USER }}
+  #       key: ${{ secrets.SSH_PRIVATE_KEY }}
+  #       script: |
+  #         cd ~/atleta
+  #         ./run.sh "atletanetwork/atleta-node:testnet-latest" ${{ secrets.BOOTNODE_P2P_ADDRESS }}
 
   # deploy the validators, which are predefined in the chainspec
   deploy_technical_validators:
@@ -95,6 +95,7 @@ jobs:
         scp testnet/docker-compose.yml ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/docker-compose.yml
         scp add-session-keys.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/add-session-keys.sh
         scp testnet/run-technical-validators.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run.sh
+        scp testnet/bootnode-entrypoint.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/bootnode-entrypoint.sh
         scp testnet.keys.env ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/testnet.keys.env
         scp chainspecs/chain-spec.testnet.json ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/chainspec.json
         scp utils/backup_script/run_backup.sh ${{ secrets.TECHNICAL_USER }}@${{ secrets.TECHNICAL_HOST }}:/sportchain/run_backup.sh
@@ -110,7 +111,7 @@ jobs:
           cd /sportchain
           docker compose down
           docker compose pull
-          ./run.sh testnet.keys.env
+          ./run.sh testnet.keys.env node-keys.env
 
   deploy_validators:
 
@@ -215,11 +216,11 @@ jobs:
             priv_node_key: VALIDATOR_15_NODE_KEY_PRIV
             pub_node_key: VALIDATOR_15_NODE_KEY_PUB
 
-          - host_key: VALIDATOR_16_HOST
-            user_key: VALIDATOR_16_USER
-            priv_key_key: VALIDATOR_16_PRIV_KEY
-            priv_node_key: VALIDATOR_16_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_16_NODE_KEY_PUB
+          # - host_key: VALIDATOR_16_HOST
+          #   user_key: VALIDATOR_16_USER
+          #   priv_key_key: VALIDATOR_16_PRIV_KEY
+          #   priv_node_key: VALIDATOR_16_NODE_KEY_PRIV
+          #   pub_node_key: VALIDATOR_16_NODE_KEY_PUB
 
     steps:
     - uses: actions/checkout@v4
@@ -231,7 +232,7 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
-        ssh-keyscan "${{ secrets[matrix.host_key] }}" >> ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
@@ -248,7 +249,7 @@ jobs:
       run: |
         mkdir -p deploy
         touch config.env
-        echo "PRIVATE_KEY=${{ secrets[matrix.priv_key_key ]}}" >> config.env
+        echo "PRIVATE_KEY=${{ secrets[matrix.priv_key_key] }}" >> config.env
         echo "DOCKER_IMAGE=atletanetwork/atleta-node:testnet-latest" >> config.env
         echo "BOOTNODE_ADDRESS=${{ secrets.BOOTNODE_P2P_ADDRESS }}" >> config.env
         echo "PRIVATE_NODE_KEY=${{ secrets[matrix.priv_node_key ] }}" >> config.env
