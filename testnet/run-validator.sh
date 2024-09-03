@@ -26,6 +26,7 @@ container_process_exporter="process_exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
+root=$(dirname "$(readlink -f "$0")")
 
 check_chainspec() {
     if [ ! -f "$chainspec" ]; then
@@ -53,7 +54,7 @@ start_node() {
     docker pull "$DOCKER_IMAGE"
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
-        -v "$(pwd)/chain-data":"/chain-data" \
+        -v "${root}/chain-data":"/chain-data" \
         -p 30333:30333 \
         -p 9944:9944 \
         -p 9615:9615 \
@@ -92,11 +93,10 @@ start_node_exporter() {
 start_process_exporter() {
 
     echo "Starting the process_exporter..."
-    root=$(dirname "$(readlink -f "$0")")
 
     docker pull ncabatoff/process-exporter:latest
     docker run -d --name "$container_process_exporter" \
-        -v "$root/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
+        -v "${root}/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
         -v /proc:/host/proc:ro \
         -p 9256:9256 \
         ncabatoff/process-exporter:latest \
@@ -110,7 +110,7 @@ start_promtail() {
     docker pull grafana/promtail:latest
     docker run -d --name "$container_promtail" \
          -p 9080:9080 \
-         -v "$(pwd)/promtail/promtail-config.yml:/etc/config/promtail-config.yml" \
+         -v "${root}/promtail/promtail-config.yml:/etc/config/promtail-config.yml" \
          -v /var/log:/var/log \
          -v /var/run/docker.sock:/var/run/docker.sock \
          grafana/promtail:latest \
