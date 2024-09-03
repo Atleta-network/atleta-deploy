@@ -38,7 +38,7 @@ maybe_cleanup() {
     containers=("$container_atleta" "$container_node_exporter" "$container_process_exporter" "$container_promtail")
 
     for container in "${containers[@]}"; do
-        if [ "$(docker ps -aq -f name=$container)" ]; then
+        if [ "$(docker ps -aq -f name="$container")" ]; then
             echo "Stopping and removing existing container $container..."
             docker stop "$container"
             docker rm "$container"
