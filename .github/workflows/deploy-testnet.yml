@@ -252,8 +252,8 @@ jobs:
         echo "PRIVATE_KEY=${{ secrets[matrix.priv_key_key] }}" >> config.env
         echo "DOCKER_IMAGE=atletanetwork/atleta-node:testnet-latest" >> config.env
         echo "BOOTNODE_ADDRESS=${{ secrets.BOOTNODE_P2P_ADDRESS }}" >> config.env
-        echo "PRIVATE_NODE_KEY=${{ secrets[matrix.priv_node_key ] }}" >> config.env
-        echo "PUBLIC_NODE_KEY=${{ secrets[matrix.pub_node_key ] }}" >> config.env
+        echo "PRIVATE_NODE_KEY=${{ secrets[matrix.priv_node_key] }}" >> config.env
+        echo "PUBLIC_NODE_KEY=${{ secrets[matrix.pub_node_key] }}" >> config.env
 
     - name: Substitute environment variables
       env:
