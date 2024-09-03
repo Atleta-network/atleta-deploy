@@ -35,46 +35,17 @@ check_chainspec() {
 }
 
 maybe_cleanup() {
+    containers=("$container_atleta" "$container_node_exporter" "$container_process_exporter" "$container_promtail")
 
-    if [ "$(docker ps -q -f name=$container_atleta)" ]; then
-        echo "Stopping existing container..."
-        docker stop "$container_atleta"
-    fi
-
-    if [ "$(docker ps -aq -f name=$container_atleta)" ]; then
-        echo "Removing existing container..."
-        docker rm "$container_atleta"
-    fi
-
-    if [ "$(docker ps -q -f name=$container_node_exporter)" ]; then
-        echo "Stopping existing container..."
-        docker stop "$container_node_exporter"
-    fi
-
-    if [ "$(docker ps -aq -f name=$container_node_exporter)" ]; then
-        echo "Removing existing container..."
-        docker rm "$container_node_exporter"
-    fi
-
-    if [ "$(docker ps -q -f name=$container_process_exporter)" ]; then
-        echo "Stopping existing container..."
-        docker stop "$container_process_exporter"
-    fi
-
-    if [ "$(docker ps -aq -f name=$container_process_exporter)" ]; then
-        echo "Removing existing container..."
-        docker rm "$container_process_exporter"
-    fi    
-
-    if [ "$(docker ps -q -f name=$container_promtail)" ]; then
-        echo "Stopping existing container..."
-        docker stop "$container_promtail"
-    fi
-
-    if [ "$(docker ps -aq -f name=$container_promtail)" ]; then
-        echo "Removing existing container..."
-        docker rm "$container_promtail"
-    fi    
+    for container in "${containers[@]}"; do
+        if [ "$(docker ps -aq -f name=$container)" ]; then
+            echo "Stopping and removing existing container $container..."
+            docker stop "$container"
+            docker rm "$container"
+        else
+            echo "Container $container not found, skipping..."
+        fi
+    done
 }
 
 start_node() {
@@ -111,7 +82,7 @@ start_node() {
 
 start_node_exporter() {
 
-echo "Starting the node_exporter..."
+    echo "Starting the node_exporter..."
     docker pull prom/node-exporter:latest
     docker run -d --name "$container_node_exporter" \
         -p 9100:9100 \
@@ -120,10 +91,12 @@ echo "Starting the node_exporter..."
 
 start_process_exporter() {
 
-echo "Starting the process_exporter..."
+    echo "Starting the process_exporter..."
+    root=$(dirname "$(readlink -f "$0")")
+
     docker pull ncabatoff/process-exporter:latest
     docker run -d --name "$container_process_exporter" \
-        -v "$(pwd)/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
+        -v "$root/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
         -v /proc:/host/proc:ro \
         -p 9256:9256 \
         ncabatoff/process-exporter:latest \
@@ -133,7 +106,7 @@ echo "Starting the process_exporter..."
 
 start_promtail() {
 
-echo "Starting the promtail..."
+    echo "Starting the promtail..."
     docker pull grafana/promtail:latest
     docker run -d --name "$container_promtail" \
          -p 9080:9080 \
