@@ -12,7 +12,7 @@ docker_image="$1"
 source bootnode-keys.env
 
 check_args() {
-    if [ $num_of_args -ne 2 ]; then
+    if [ $num_of_args -ne 1 ]; then
         printf "\033[31m"
         echo "Error: wrong number of arguments"
         printf "\033[0m"
@@ -22,9 +22,8 @@ check_args() {
 }
 
 usage() {
-    echo "Usage: ./run-bootnode.sh <DOCKER_IMAGE> <BOOTNODE_P2P_ADDRESS>"
+    echo "Usage: ./run-bootnode.sh <DOCKER_IMAGE>"
     printf "\t<DOCKER_IMAGE>         node docker image to use\n"
-    printf "\t<BOOTNODE_P2P_ADDRESS> the address of the bootnode to which this bootnode should connect (in libp2p format)\n"
 }
 
 check_chainspec() {
