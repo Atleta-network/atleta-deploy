@@ -6,7 +6,7 @@ on:
 jobs:
   deploy:
 
-    environment: testnet
+    environment: stagenet
     runs-on: ubuntu-latest
 
     steps:
@@ -19,8 +19,8 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
-        ssh-keyscan ${{ secrets.DEVNET_HOST }} >> ~/.ssh/known_hosts
-        echo "${{ secrets.DEVNET_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        ssh-keyscan ${{ secrets.TELEMETRY_HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.TELEMETRY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
 
@@ -38,17 +38,8 @@ jobs:
         VALIDATOR_4_HOST: ${{ secrets.VALIDATOR_4_HOST }}
         VALIDATOR_5_HOST: ${{ secrets.VALIDATOR_5_HOST }}
         VALIDATOR_6_HOST: ${{ secrets.VALIDATOR_6_HOST }}
-        VALIDATOR_7_HOST: ${{ secrets.VALIDATOR_7_HOST }}
-        VALIDATOR_8_HOST: ${{ secrets.VALIDATOR_8_HOST }}
-        VALIDATOR_9_HOST: ${{ secrets.VALIDATOR_9_HOST }}
-        VALIDATOR_10_HOST: ${{ secrets.VALIDATOR_10_HOST }}
-        VALIDATOR_11_HOST: ${{ secrets.VALIDATOR_11_HOST }}
-        VALIDATOR_12_HOST: ${{ secrets.VALIDATOR_12_HOST }}
-        VALIDATOR_13_HOST: ${{ secrets.VALIDATOR_13_HOST }}
-        VALIDATOR_14_HOST: ${{ secrets.VALIDATOR_14_HOST }}
-        VALIDATOR_15_HOST: ${{ secrets.VALIDATOR_15_HOST }}
-        VALIDATOR_16_HOST: ${{ secrets.VALIDATOR_16_HOST }}
-        DEVNET_HOST: ${{ secrets.DEVNET_HOST }}
+        BOOT_NODE_HOST: ${{ secrets.BOOT_NODE_HOST }}
+        TELEMETRY_HOST: ${{ secrets.TELEMETRY_HOST }}
       run: |
         cd utils/telemetry/prometheus
         chmod +x generate_prometheus_config.sh
@@ -58,23 +49,24 @@ jobs:
     - name: Generate config.env
       run: |
         touch utils/telemetry/docker_conf.env
-        echo "DEVNET_HOST=${{ secrets.DEVNET_HOST }}" >> utils/telemetry/docker_conf.env
+        echo "TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}" >> utils/telemetry/docker_conf.env
 
     - name: Copy Files to Server
       run: |
-        scp utils/telemetry/docker-compose.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/docker-compose.yml
-        scp utils/telemetry/docker_conf.env ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/docker_conf.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }} "mkdir -p /sportchain/telemetry/{prometheus,loki,promtail}"
-        scp utils/telemetry/prometheus/prometheus.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/prometheus/prometheus.yml
-        scp utils/telemetry/loki/loki-config.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/loki/loki-config.yml
-        scp utils/telemetry/promtail/promtail-config.fill.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/telemetry/promtail/promtail-config.yml
+        ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry"
+        scp utils/telemetry/docker-compose.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/docker-compose.yml
+        scp utils/telemetry/docker_conf.env ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/docker_conf.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry/{prometheus,loki,promtail}"
+        scp utils/telemetry/prometheus/prometheus.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/prometheus/prometheus.yml
+        scp utils/telemetry/loki/loki-config.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/loki/loki-config.yml
+        scp utils/telemetry/promtail/promtail-config.fill.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/promtail/promtail-config.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.DEVNET_HOST }}
-        username: ${{ secrets.DEVNET_USERNAME }}
-        key: ${{ secrets.DEVNET_PRIVATE_KEY }}
+        host: ${{ secrets.TELEMETRY_HOST }}
+        username: ${{ secrets.TELEMETRY_USER }}
+        key: ${{ secrets.TELEMETRY_SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/telemetry
           docker compose down

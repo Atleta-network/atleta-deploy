@@ -5,9 +5,9 @@ scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: 'devnet'
+  - job_name: 'telemetry'
     static_configs:
-      - targets: ['${DEVNET_HOST}:9615', '${DEVNET_HOST}:9100', '${DEVNET_HOST}:9256']
+      - targets: ['${TELEMETRY_HOST}:9615', '${TELEMETRY_HOST}:9100', '${TELEMETRY_HOST}:9256']
         labels:
-          host: '${DEVNET_HOST}'
+          host: '${TELEMETRY_HOST}'
 
