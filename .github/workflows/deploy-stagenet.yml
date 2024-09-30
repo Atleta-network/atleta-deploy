@@ -2,7 +2,7 @@ name: Deploy Stagenet
 
 on:
   push:
-    branches: [ "test/stagenet-subst" ]
+    branches: [ "test/stagenet-deploy" ]
   workflow_dispatch:
 
 jobs:
