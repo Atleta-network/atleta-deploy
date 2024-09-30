@@ -2,6 +2,8 @@
 
 set -ue
 
+source validator.env
+
 keys_file=$1
 node_keys_file=$2
 
@@ -13,10 +15,7 @@ chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
 root=$(dirname "$(readlink -f "$0")")
 DOCKER_IMAGE="atletanetwork/atleta-node:mainnet-latest"
-node_key="$VALIDATOR_KEY"
-node_name="$VALIDATOR_NAME"
-bootnode_address="$BOOTNODE_P2P_ADDRESS"
-validator="VALIDATOR${index}_"
+validator="VALIDATOR${INDEX}_"
 
 if [ $# -ne 2 ]; then
     printf "\033[31m"
@@ -71,9 +70,10 @@ start_node_unsafe() {
         --platform linux/amd64 \
         "$DOCKER_IMAGE" \
         --validator \
+        --name $validator \
         --chain "/chainspec.json" \
         --name $container_atleta \
-        --bootnodes $bootnode_address \
+        --bootnodes $BOOT_NODE_KEY_PUB \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=unsafe \
@@ -103,8 +103,8 @@ start_node_safe() {
         "$DOCKER_IMAGE" \
         --validator \
         --chain "/chainspec.json" \
-        --node-key $node_key \
-        --bootnodes $bootnode_address \
+        --node-key $VALIDATOR_KEY \
+        --bootnodes $BOOT_NODE_KEY_PUB \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=safe \

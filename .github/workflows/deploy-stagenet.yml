@@ -51,6 +51,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta"
         scp stagenet/run-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/run.sh
         scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
+        scp bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
@@ -60,9 +61,12 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run.sh "atletanetwork/atleta-node:mainnet-latest" ${{ secrets.BOOT_NODE_KEY_PUB }}
+          ./run.sh "atletanetwork/atleta-node:mainnet-latest"
 
   deploy_validators:
+
+    needs: 
+      - deploy_public_bootnode
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -137,17 +141,13 @@ jobs:
       run: |
         echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > stagenet.keys.env
 
-    - name: Prepare variables
-      env:
-        INDEX: ${{ matrix.node_index }}
-        VALIDATOR_NODE_KEY_PRIV: ${{ secrets[matrix.priv_node_key] }}
-        VALIDATOR_NODE_KEY_PUB: ${{ secrets[matrix.pub_node_key] }}
-        VALIDATOR_KEY: ${{ secrets[matrix.priv_node_key] }}
-        BOOTNODE_P2P_ADDRESS: ${{ secrets.BOOTNODE_P2P_ADDRESS }}
+    - name: Prepare .env files
       run: |
         echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> stagenet/node-keys.env
         echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PUB=${{ secrets[matrix.pub_node_key] }}" >> stagenet/node-keys.env
-        sed -i "7i index=\"${INDEX}\"" stagenet/run-validator-main.sh
+        echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/validator.env
+        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/validator.env
+        echo "INDEX=${{ matrix.node_index }}" >> stagenet/validator.env
 
     - name: Copy Files to Server
       run: |
