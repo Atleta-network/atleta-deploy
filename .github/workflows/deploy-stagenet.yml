@@ -96,6 +96,7 @@ jobs:
 
           - node_index: 4
             host_key: VALIDATOR_4_HOST
+            user_key: VALIDATOR_4_USER
             priv_node_key: VALIDATOR_4_NODE_KEY_PRIV
             pub_node_key: VALIDATOR_4_NODE_KEY_PUB
 
