@@ -31,7 +31,7 @@ check_chainspec() {
     fi
 }
 
-cleanup_all() {
+maybe_cleanup() {
     containers=("$container_atleta" "$container_node_exporter" "$container_process_exporter" "$container_promtail")
 
     for container in "${containers[@]}"; do
@@ -45,19 +45,6 @@ cleanup_all() {
     done
 }
 
-cleanup_node() {
-    container="$1"
-
-    if [ "$(docker ps -aq -f name="$container")" ]; then
-        echo "Stopping and removing existing container $container..."
-        docker stop "$container"
-        docker rm "$container"
-    else
-        echo "Container $container not found, skipping..."
-    fi
-}
-
-
 start_node_unsafe() {
     echo "Starting the validator node..."
     docker pull "$DOCKER_IMAGE"
@@ -70,10 +57,10 @@ start_node_unsafe() {
         --platform linux/amd64 \
         "$DOCKER_IMAGE" \
         --validator \
-        --name $validator \
         --chain "/chainspec.json" \
-        --name $container_atleta \
-        --bootnodes $BOOT_NODE_P2P_ADDRESS \
+        --node-key $VALIDATOR_KEY \
+        --name "$validator" \
+        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=unsafe \
@@ -89,7 +76,6 @@ start_node_unsafe() {
         --rpc-max-connections 10000
 }
 
-
 start_node_safe() {
     echo "Starting the validator node..."
     docker pull "$DOCKER_IMAGE"
@@ -104,7 +90,8 @@ start_node_safe() {
         --validator \
         --chain "/chainspec.json" \
         --node-key $VALIDATOR_KEY \
-        --bootnodes $BOOT_NODE_P2P_ADDRESS \
+        --name "$validator" \
+        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=safe \
@@ -120,15 +107,14 @@ start_node_safe() {
         --rpc-max-connections 10000
 }
 
-cleanup_all
+maybe_cleanup
 start_node_unsafe
 
 sleep 30
 
-./add-session-keys.sh "$keys_file" "$validator" "http://127.0.0.1:9944" "$container_atleta"
+./add-session-keys.sh "$keys_file" $validator "$rpc_api_endpoint" "$container_atleta"
 
-cleanup_node"$container_atleta"
+maybe_cleanup
 start_node_safe
-
 
 echo "Done"

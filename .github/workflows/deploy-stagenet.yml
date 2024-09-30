@@ -146,7 +146,7 @@ jobs:
         echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> stagenet/node-keys.env
         echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PUB=${{ secrets[matrix.pub_node_key] }}" >> stagenet/node-keys.env
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/validator.env
-        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/validator.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> stagenet/validator.env
 
     - name: Copy Files to Server
