@@ -49,6 +49,7 @@ jobs:
     - name: Copy files to the server
       run: |
         ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "sudo mkdir -p /sportchain/atleta"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "sudo chown -R ${{ secrets.BOOT_NODE_USER }}:${{ secrets.BOOT_NODE_USER }} /sportchain"
         scp stagenet/run-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/run.sh
         scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
         scp bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
