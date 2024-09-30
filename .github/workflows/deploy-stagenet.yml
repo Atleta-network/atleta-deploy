@@ -48,9 +48,9 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /home/${{ secrets.BOOT_NODE_USER }}/sportchain"
-        scp stagenet/run-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/home/${{ secrets.BOOT_NODE_USER }}/sportchain/run.sh
-        scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/home/${{ secrets.BOOT_NODE_USER }}/sportchain/chainspec.json
+        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta"
+        scp stagenet/run-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/run.sh
+        scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
@@ -59,7 +59,7 @@ jobs:
         username: ${{ secrets.BOOT_NODE_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /home/${{ secrets.BOOT_NODE_USER }}/sportchain
+          cd /sportchain/atleta
           ./run.sh "atletanetwork/atleta-node:mainnet-latest" ${{ secrets.BOOT_NODE_KEY_PUB }}
 
   deploy_validators:
@@ -151,12 +151,12 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /home/${{ secrets[matrix.user_key] }}/sportchain"
-        scp add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/sportchain/add-session-keys.sh
-        scp stagenet/run-validator-main.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/sportchain/run.sh
-        scp stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/sportchain/stagenet.keys.env
-        scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/sportchain/chainspec.json
-        scp stagenet/node-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/home/${{ secrets[matrix.user_key] }}/sportchain/node-keys.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
+        scp add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/add-session-keys.sh
+        scp stagenet/run-validator-main.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run.sh
+        scp stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
+        scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp stagenet/node-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/node-keys.env
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -165,5 +165,5 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /home/${{ secrets[matrix.user_key] }}/sportchain
+          cd /sportchain/atleta
           ./run.sh stagenet.keys.env node-keys.env
