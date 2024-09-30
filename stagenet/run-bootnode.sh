@@ -8,7 +8,6 @@ chainspec="./chainspec.json"
 
 num_of_args=$#
 docker_image="$1"
-bootnode_address="$2"
 
 source bootnode-keys.env
 
