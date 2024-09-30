@@ -73,7 +73,7 @@ start_node_unsafe() {
         --name $validator \
         --chain "/chainspec.json" \
         --name $container_atleta \
-        --bootnodes $BOOT_NODE_KEY_PUB \
+        --bootnodes $BOOT_NODE_P2P_ADDRESS \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=unsafe \
@@ -104,7 +104,7 @@ start_node_safe() {
         --validator \
         --chain "/chainspec.json" \
         --node-key $VALIDATOR_KEY \
-        --bootnodes $BOOT_NODE_KEY_PUB \
+        --bootnodes $BOOT_NODE_P2P_ADDRESS \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=safe \

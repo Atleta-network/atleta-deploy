@@ -39,12 +39,10 @@ jobs:
         wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/stagenet/chainspecs/chain-spec.stagenet.json
 
     - name: Prepare variables
-      env:
-        BOOT_NODE_KEY_PRIV: ${{ secrets.BOOT_NODE_KEY_PRIV }}
-        BOOT_NODE_KEY_PUB: ${{ secrets.BOOT_NODE_KEY_PUB }}
       run: |
         echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> stagenet/bootnode-keys.env
         echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/bootnode-keys.env
+        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/bootnode-keys.env
         
     - name: Copy files to the server
       run: |
@@ -148,7 +146,7 @@ jobs:
         echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> stagenet/node-keys.env
         echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PUB=${{ secrets[matrix.pub_node_key] }}" >> stagenet/node-keys.env
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/validator.env
-        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/validator.env
+        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> stagenet/validator.env
 
     - name: Copy Files to Server

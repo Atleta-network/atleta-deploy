@@ -61,7 +61,7 @@ start_node() {
         --validator \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key $BOOT_NODE_KEY_PRIV \
-        --bootnodes "$BOOT_NODE_KEY_PUB"
+        --bootnodes "$BOOT_NODE_P2P_ADDRESS"
 }
 
 check_args
