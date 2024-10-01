@@ -15,8 +15,6 @@ services:
       SUBSTRATE_TELEMETRY_URL: ws://${TELEMETRY_HOST}:8000/feed
     ports:
       - 8081:8000
-    expose:
-      - 8081
     restart: unless-stopped
     networks:
       - telemetry-network
@@ -32,8 +30,6 @@ services:
       ]
     ports:
       - 8001:8001
-    expose:
-      - 8001
     restart: unless-stopped
     networks:
       - telemetry-network
@@ -48,8 +44,6 @@ services:
       ]
     ports:
       - 8000:8000
-    expose:
-      - 8000
     restart: unless-stopped
     networks:
       - telemetry-network
@@ -67,7 +61,7 @@ services:
       - telemetry-network
 
   grafana:
-    image: grafana/grafana:latest
+    image: grafana/grafana:11.1.1
     container_name: grafana
     environment:
       - GF_INSTALL_PLUGINS=marcusolsson-treemap-panel

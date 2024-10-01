@@ -66,10 +66,11 @@ start_node() {
         --base-path /chain-data \
         --allow-private-ipv4 \
         --validator \
+        --state-pruning archive
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key "$BOOT_NODE_KEY_PRIV" \
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
-        --telemetry-url 'ws://${TELEMETRY_HOST}:8001/submit 0'
+        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 0"
 }
 
 start_node_exporter() {

@@ -50,6 +50,7 @@ jobs:
       run: |
         touch utils/telemetry/docker_conf.env
         echo "TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}" >> utils/telemetry/docker_conf.env
+        echo "BOOT_NODE_HOST=${{ secrets.BOOT_NODE_HOST }}" >> utils/telemetry/docker_conf.env
 
     - name: Copy Files to Server
       run: |

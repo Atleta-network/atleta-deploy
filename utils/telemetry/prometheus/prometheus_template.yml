@@ -10,4 +10,9 @@ scrape_configs:
       - targets: ['${TELEMETRY_HOST}:9615', '${TELEMETRY_HOST}:9100', '${TELEMETRY_HOST}:9256']
         labels:
           host: '${TELEMETRY_HOST}'
+  - job_name: 'bootnode'
+    static_configs:
+      - targets: ['${BOOT_NODE_HOST}:9615', '${BOOT_NODE_HOST}:9100', '${BOOT_NODE_HOST}:9256']
+        labels:
+          host: '${BOOT_NODE_HOST}'
 
