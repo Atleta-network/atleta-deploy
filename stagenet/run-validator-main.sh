@@ -7,8 +7,8 @@ source validator.env
 keys_file=$1
 
 container_atleta="validator_stagenet"
-container_node_exporter="node_exporter"
-container_process_exporter="process_exporter"
+container_node_exporter="node-exporter"
+container_process_exporter="process-exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"

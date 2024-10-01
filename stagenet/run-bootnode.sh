@@ -5,8 +5,8 @@ set -u
 
 container_atleta="bootnode"
 chainspec="./chainspec.json"
-container_node_exporter="node_exporter"
-container_process_exporter="process_exporter"
+container_node_exporter="node-exporter"
+container_process_exporter="process-exporter"
 container_promtail="promtail"
 root=$(dirname "$(readlink -f "$0")")
 num_of_args=$#
