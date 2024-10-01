@@ -3,6 +3,8 @@
 
 set -u
 
+source bootnode.env
+
 container_atleta="bootnode"
 chainspec="./chainspec.json"
 container_node_exporter="node-exporter"
@@ -66,7 +68,8 @@ start_node() {
         --validator \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key "$BOOT_NODE_KEY_PRIV" \
-        --bootnodes "$BOOT_NODE_P2P_ADDRESS"
+        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
+        --telemetry-url 'ws://${TELEMETRY_HOST}:8001/submit 0'
 }
 
 start_node_exporter() {

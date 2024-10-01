@@ -43,6 +43,7 @@ jobs:
         echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> stagenet/bootnode-keys.env
         echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/bootnode-keys.env
         echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/bootnode-keys.env
+        echo "TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}" >> stagenet/bootnode.env
 
     - name: Substitute environment variables
       env:
@@ -57,6 +58,7 @@ jobs:
         scp stagenet/run-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/run.sh
         scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
         scp stagenet/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
+        scp stagenet/bootnode.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/.env
         ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta/promtail"
         scp stagenet/promtail-config.fill.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
 
@@ -160,6 +162,7 @@ jobs:
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/validator.env
         echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> stagenet/validator.env
+        echo "TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}" >> stagenet/validator.env
 
     - name: Copy Files to Server
       run: |
@@ -168,7 +171,7 @@ jobs:
         scp stagenet/run-validator-main.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run.sh
         scp stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp stagenet/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/validator.env
+        scp stagenet/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
         ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/promtail"
         scp stagenet/promtail-config.fill.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
 
