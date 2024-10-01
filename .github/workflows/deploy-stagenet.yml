@@ -43,6 +43,12 @@ jobs:
         echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> stagenet/bootnode-keys.env
         echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/bootnode-keys.env
         echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/bootnode-keys.env
+
+    - name: Substitute environment variables
+      env:
+        LOKI_HOST: ${{ secrets.LOKI_HOST }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > utils/telemetry/promtail/promtail-config.fill.yml 
         
     - name: Copy files to the server
       run: |
@@ -51,6 +57,8 @@ jobs:
         scp stagenet/run-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/run.sh
         scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
         scp stagenet/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta/promtail"
+        scp testnet/promtail/promtail-config.fill.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
@@ -141,10 +149,14 @@ jobs:
       run: |
         echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > stagenet.keys.env
 
+    - name: Substitute environment variables
+      env:
+        LOKI_HOST: ${{ secrets.LOKI_HOST }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > utils/telemetry/promtail/promtail-config.fill.yml
+
     - name: Prepare .env files
       run: |
-        echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> stagenet/node-keys.env
-        echo "VALIDATOR${{ matrix.node_index }}_NODE_KEY_PUB=${{ secrets[matrix.pub_node_key] }}" >> stagenet/node-keys.env
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/validator.env
         echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> stagenet/validator.env
@@ -156,8 +168,9 @@ jobs:
         scp stagenet/run-validator-main.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run.sh
         scp stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp stagenet/node-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/node-keys.env
         scp stagenet/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/validator.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/promtail"
+        scp testnet/promtail/promtail-config.fill.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -167,4 +180,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run.sh stagenet.keys.env node-keys.env
+          ./run.sh stagenet.keys.env

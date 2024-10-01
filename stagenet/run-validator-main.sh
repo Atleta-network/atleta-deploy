@@ -5,7 +5,6 @@ set -ue
 source validator.env
 
 keys_file=$1
-node_keys_file=$2
 
 container_atleta="validator_stagenet"
 container_node_exporter="node_exporter"
@@ -17,7 +16,7 @@ root=$(dirname "$(readlink -f "$0")")
 DOCKER_IMAGE="atletanetwork/atleta-node:mainnet-latest"
 validator="VALIDATOR${INDEX}_"
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
     printf "\033[31m"
     echo "Error: wrong number of arguments"
     printf "\033[0m"
@@ -58,7 +57,7 @@ start_node_unsafe() {
         "$DOCKER_IMAGE" \
         --validator \
         --chain "/chainspec.json" \
-        --node-key $VALIDATOR_KEY \
+        --node-key "$VALIDATOR_KEY" \
         --name "$validator" \
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --base-path /chain-data \
@@ -89,7 +88,7 @@ start_node_safe() {
         "$DOCKER_IMAGE" \
         --validator \
         --chain "/chainspec.json" \
-        --node-key $VALIDATOR_KEY \
+        --node-key "$VALIDATOR_KEY" \
         --name "$validator" \
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --base-path /chain-data \
@@ -112,7 +111,7 @@ start_node_unsafe
 
 sleep 30
 
-./add-session-keys.sh "$keys_file" $validator "$rpc_api_endpoint" "$container_atleta"
+./add-session-keys.sh "$keys_file" "$validator" "$rpc_api_endpoint" "$container_atleta"
 
 maybe_cleanup
 start_node_safe
