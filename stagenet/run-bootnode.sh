@@ -3,7 +3,8 @@
 
 set -u
 
-source bootnode.env
+source .env
+source bootnode-keys.env
 
 container_atleta="bootnode"
 chainspec="./chainspec.json"
@@ -13,8 +14,6 @@ container_promtail="promtail"
 root=$(dirname "$(readlink -f "$0")")
 num_of_args=$#
 docker_image="$1"
-
-source bootnode-keys.env
 
 check_args() {
     if [ $num_of_args -ne 1 ]; then
@@ -66,7 +65,7 @@ start_node() {
         --base-path /chain-data \
         --allow-private-ipv4 \
         --validator \
-        --state-pruning archive
+        --state-pruning archive \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key "$BOOT_NODE_KEY_PRIV" \
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
