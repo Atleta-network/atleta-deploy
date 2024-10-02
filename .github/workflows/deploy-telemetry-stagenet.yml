@@ -1,4 +1,4 @@
-name: Deploy Telemetry for Devnet
+name: Deploy Telemetry for Stagenet
 
 on:
   workflow_dispatch:
