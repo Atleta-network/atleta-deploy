@@ -23,7 +23,7 @@
   "fiscalYearStartMonth": 0,
   "gnetId": 13840,
   "graphTooltip": 0,
-  "id": 25,
+  "id": 5,
   "links": [
     {
       "icon": "external link",
@@ -54,7 +54,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "gridPos": {
         "h": 1,
@@ -68,7 +68,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "refId": "A"
         }
@@ -79,7 +79,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Busy state of all CPU cores together",
       "fieldConfig": {
@@ -144,15 +144,15 @@
         "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "(((count(count(node_cpu_seconds_total{host=\"$node\",job=\"$job\"}) by (cpu))) - avg(sum by (mode)(irate(node_cpu_seconds_total{mode='idle',host=\"$node\",job=\"$job\"}[5m])))) * 100) / count(count(node_cpu_seconds_total{host=\"$node\",job=\"$job\"}) by (cpu))",
+          "expr": "100 * (1 - avg(rate(node_cpu_seconds_total{mode=\"idle\", host=\"$node\", job=\"$job\"}[$__rate_interval])) by (instance))\n",
           "hide": false,
           "intervalFactor": 1,
           "legendFormat": "",
@@ -167,7 +167,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Busy state of all CPU cores together (5 min average)",
       "fieldConfig": {
@@ -232,12 +232,12 @@
         "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "scalar(node_load1{host=\"$node\",job=\"$job\"}) * 100 / count(count(node_cpu_seconds_total{host=\"$node\",job=\"$job\"}) by (cpu))",
@@ -255,7 +255,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Non available RAM memory",
       "fieldConfig": {
@@ -312,12 +312,12 @@
         "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "((node_memory_MemTotal_bytes{host=\"$node\",job=\"$job\"} - node_memory_MemFree_bytes{host=\"$node\",job=\"$job\"}) / (node_memory_MemTotal_bytes{host=\"$node\",job=\"$job\"} )) * 100",
@@ -331,7 +331,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "100 - ((node_memory_MemAvailable_bytes{host=\"$node\",job=\"$job\"} * 100) / node_memory_MemTotal_bytes{host=\"$node\",job=\"$job\"})",
@@ -349,7 +349,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Used Root FS",
       "fieldConfig": {
@@ -415,12 +415,12 @@
         "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "100 - ((node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\",fstype!=\"rootfs\"})",
@@ -437,7 +437,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Used Swap",
       "fieldConfig": {
@@ -502,12 +502,12 @@
         "sizing": "auto",
         "text": {}
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "((node_memory_SwapTotal_bytes{host=\"$node\",job=\"$job\"} - node_memory_SwapFree_bytes{host=\"$node\",job=\"$job\"}) / (node_memory_SwapTotal_bytes{host=\"$node\",job=\"$job\"} )) * 100",
@@ -523,7 +523,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Total number of CPU cores",
       "fieldConfig": {
@@ -581,12 +581,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "count(count(node_cpu_seconds_total{host=\"$node\",job=\"$job\"}) by (cpu))",
@@ -604,7 +604,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Total RAM",
       "fieldConfig": {
@@ -663,12 +663,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_MemTotal_bytes{host=\"$node\",job=\"$job\"}",
@@ -684,7 +684,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "Total RootFS",
       "fieldConfig": {
@@ -750,7 +750,7 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
@@ -775,7 +775,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "System uptime",
       "fieldConfig": {
@@ -835,12 +835,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_time_seconds{host=\"$node\",job=\"$job\"} - node_boot_time_seconds{host=\"$node\",job=\"$job\"}",
@@ -856,7 +856,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -870,7 +870,6 @@
             "axisLabel": "counter",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 20,
             "gradientMode": "none",
@@ -991,7 +990,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -1005,7 +1004,6 @@
             "axisLabel": "packets out (-) / in (+)",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 20,
             "gradientMode": "none",
@@ -1187,7 +1185,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -1201,7 +1199,6 @@
             "axisLabel": "counter",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 20,
             "gradientMode": "none",
@@ -1294,7 +1291,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -1309,7 +1306,6 @@
             "axisLabel": "time",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 40,
             "gradientMode": "none",
@@ -1412,7 +1408,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "irate(node_disk_io_time_seconds_total{host=\"$node\",job=\"$job\",device=~\"$diskdevices\"} [5m])",
@@ -1431,7 +1427,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -1445,7 +1441,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -1478,7 +1473,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -1757,7 +1753,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_MemTotal_bytes{host=~\"$node\"}",
@@ -1773,7 +1769,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_MemTotal_bytes{host=~\"$node\"} - node_memory_MemAvailable_bytes{host=~\"$node\"}",
@@ -1789,7 +1785,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_MemAvailable_bytes{host=~\"$node\"}",
@@ -1805,7 +1801,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_Buffers_bytes{host=~\"$node\"}",
@@ -1821,7 +1817,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_MemFree_bytes{host=~\"$node\"}",
@@ -1836,7 +1832,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_Cached_bytes{host=~\"$node\"}",
@@ -1851,7 +1847,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_memory_MemTotal_bytes{host=~\"$node\"} - (node_memory_Cached_bytes{host=~\"$node\"} + node_memory_Buffers_bytes{host=~\"$node\"} + node_memory_MemFree_bytes{host=~\"$node\"})",
@@ -1864,7 +1860,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "(1 - (node_memory_MemAvailable_bytes{host=~\"$node\"} / (node_memory_MemTotal_bytes{host=~\"$node\"})))* 100",
@@ -1883,7 +1879,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -1897,7 +1893,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -1930,7 +1925,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2179,7 +2175,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"}",
@@ -2195,7 +2191,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"} - node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"}",
@@ -2211,7 +2207,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"}",
@@ -2227,7 +2223,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "(1 - (node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"} / (node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"})))* 100",
@@ -2247,7 +2243,7 @@
       "collapsed": false,
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "gridPos": {
         "h": 1,
@@ -2261,7 +2257,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "refId": "A"
         }
@@ -2272,7 +2268,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -2296,7 +2292,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgb(222, 101, 171)"
+                "color": "rgb(222, 101, 171)",
+                "value": null
               }
             ]
           },
@@ -2329,12 +2326,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_block_height{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -2350,7 +2347,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -2365,7 +2362,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -2397,7 +2393,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2433,7 +2430,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_block_height{host=\"[[instance]]\",chain=\"[[network]]\",status=~\"finalized|sync_target\"}",
@@ -2448,7 +2445,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -2467,7 +2464,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue"
+                "color": "semi-dark-blue",
+                "value": null
               }
             ]
           },
@@ -2500,12 +2498,12 @@
         "textMode": "auto",
         "wideLayout": true
       },
-      "pluginVersion": "11.2.0",
+      "pluginVersion": "11.1.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "rate(substrate_sub_libp2p_network_bytes_total{host=\"[[instance]]\",chain=\"[[network]]\"}[5m])",
@@ -2521,7 +2519,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -2536,7 +2534,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -2568,7 +2565,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2604,7 +2602,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "rate(substrate_block_height{status=\"finalized\",host=\"[[instance]]\",chain=\"[[network]]\"}[10m])*60",
@@ -2621,7 +2619,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -2636,7 +2634,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -2668,7 +2665,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2704,7 +2702,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sub_libp2p_peers_count{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -2719,7 +2717,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -2734,7 +2732,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -2766,7 +2763,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2802,7 +2800,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sub_libp2p_connections{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -2815,7 +2813,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sub_libp2p_is_major_syncing{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -2827,7 +2825,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sub_libp2p_kbuckets_num_nodes{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -2843,7 +2841,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -2857,7 +2855,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -2889,7 +2886,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2925,7 +2923,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_state_cache_bytes{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -2941,7 +2939,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -2956,7 +2954,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -2988,7 +2985,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3025,7 +3023,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "increase(substrate_block_height{host=\"[[instance]]\",chain=\"[[network]]\",status=~\"finalized|sync_target\"}[1m])",
@@ -3041,7 +3039,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -3056,7 +3054,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3088,7 +3085,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3124,7 +3122,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "rate(substrate_block_height{status=\"finalized\",host=\"[[instance]]\",chain=\"[[network]]\"}[10m])/rate(substrate_block_height{status=\"finalized\",host=\"[[instance]]\",chain=\"[[network]]\"}[1m])",
@@ -3140,7 +3138,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -3154,7 +3152,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3186,7 +3183,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3222,7 +3220,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "rate(substrate_finality_grandpa_communication_gossip_validator_messages{host=\"[[instance]]\",chain=\"[[network]]\"}[5m])",
@@ -3238,7 +3236,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -3252,7 +3250,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3284,7 +3281,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3320,7 +3318,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sync_extra_justifications{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -3332,7 +3330,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sync_extra_justifications_failed{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -3343,7 +3341,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sync_extra_justifications_importing{instance=\"[[instance]]\",network=\"[[network]]\"}",
@@ -3354,7 +3352,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sync_extra_justifications_pending{instance=\"[[instance]]\",network=\"[[network]]\"}",
@@ -3369,7 +3367,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -3383,7 +3381,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3415,7 +3412,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3451,7 +3449,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "rate(substrate_tasks_polling_started_total{host=\"[[instance]]\",chain=\"[[network]]\"}[1m]) - rate(substrate_tasks_polling_duration_count{host=\"[[instance]]\",chain=\"[[network]]\"}[1m])",
@@ -3467,7 +3465,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -3482,7 +3480,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3514,7 +3511,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3550,7 +3548,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "scalar(substrate_block_height{status=\"best\",host=\"[[instance]]\",chain=\"[[network]]\"})-scalar(substrate_block_height{status=\"finalized\",host=\"[[instance]]\",chain=\"[[network]]\"})",
@@ -3566,7 +3564,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "fieldConfig": {
         "defaults": {
@@ -3580,7 +3578,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3612,7 +3609,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3648,7 +3646,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sync_queued_blocks{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -3664,7 +3662,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -3679,7 +3677,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3711,7 +3708,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3748,7 +3746,7 @@
           "data": "",
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_ready_transactions_number{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -3766,7 +3764,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "cdulypte7qltsc"
+        "uid": "adzk3nkk8ta0wd"
       },
       "description": "",
       "fieldConfig": {
@@ -3781,7 +3779,6 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "barWidthFactor": 0.6,
             "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
@@ -3813,7 +3810,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3850,7 +3848,7 @@
           "data": "",
           "datasource": {
             "type": "prometheus",
-            "uid": "cdulypte7qltsc"
+            "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
           "expr": "substrate_sub_libp2p_connections_opened_total{host=\"[[instance]]\",chain=\"[[network]]\"}",
@@ -4124,12 +4122,12 @@
       {
         "current": {
           "selected": false,
-          "text": "testnet",
-          "value": "testnet"
+          "text": "mainnet",
+          "value": "mainnet"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "cdulypte7qltsc"
+          "uid": "adzk3nkk8ta0wd"
         },
         "definition": "label_values(chain)",
         "description": "Default value: None",
@@ -4156,12 +4154,12 @@
       {
         "current": {
           "selected": false,
-          "text": "92.38.150.139",
-          "value": "92.38.150.139"
+          "text": "172.99.188.229",
+          "value": "172.99.188.229"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "cdulypte7qltsc"
+          "uid": "adzk3nkk8ta0wd"
         },
         "definition": "label_values(substrate_build_info{chain=\"$network\"},host)",
         "description": "Chain instance server host - default value: localhost:9615",
@@ -4188,12 +4186,12 @@
       {
         "current": {
           "selected": false,
-          "text": "92.38.150.139",
-          "value": "92.38.150.139"
+          "text": "172.99.188.229",
+          "value": "172.99.188.229"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "cdulypte7qltsc"
+          "uid": "adzk3nkk8ta0wd"
         },
         "definition": "label_values(node_uname_info{host=\"$instance\"},host)",
         "description": "Node exporter server host - default value: localhost:9100",
@@ -4220,12 +4218,12 @@
       {
         "current": {
           "selected": false,
-          "text": "validator_15",
-          "value": "validator_15"
+          "text": "validator_5",
+          "value": "validator_5"
         },
         "datasource": {
           "type": "prometheus",
-          "uid": "cdulypte7qltsc"
+          "uid": "adzk3nkk8ta0wd"
         },
         "definition": "label_values(node_uname_info{host=\"$node\"},job)",
         "description": "Node exporter server job - default value: node_exporter",
@@ -4291,8 +4289,8 @@
     ]
   },
   "timezone": "",
-  "title": "Substrate Dashboard (dev, testnet)",
+  "title": "Substrate Dashboard (stagenet)",
   "uid": "ddw06wc9k4p34b",
-  "version": 17,
+  "version": 4,
   "weekStart": ""
 }

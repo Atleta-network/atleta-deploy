@@ -57,6 +57,7 @@ start_node() {
         -v "$chainspec":"/chainspec.json" \
         -v "$(pwd)/chain-data":"/chain-data" \
         -p 30333:30333 \
+        -p 9615:9615 \
         --platform linux/amd64 \
         --restart always \
         "$docker_image" \
@@ -69,6 +70,8 @@ start_node() {
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key "$BOOT_NODE_KEY_PRIV" \
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
+        --prometheus-external \
+        --prometheus-port 9615 \
         --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 0"
 }
 
