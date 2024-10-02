@@ -115,8 +115,8 @@ jobs:
             user_key: VALIDATOR_6_USER
             priv_node_key: VALIDATOR_6_NODE_KEY_PRIV
             pub_node_key: VALIDATOR_6_NODE_KEY_PUB
-            
-            max-parallel: 1
+        
+      max-parallel: 1
 
     steps:
     - uses: actions/checkout@v4
@@ -180,4 +180,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./update-validator.sh stagenet.keys.env atletanetwork/atleta-node:stagenet-latest
+          ./update-validator.sh atletanetwork/atleta-node:stagenet-latest
