@@ -13,7 +13,7 @@ container_process_exporter="process-exporter"
 container_promtail="promtail"
 root=$(dirname "$(readlink -f "$0")")
 num_of_args=$#
-docker_image="$1"
+docker_image=$1
 
 check_args() {
     if [ $num_of_args -ne 1 ]; then

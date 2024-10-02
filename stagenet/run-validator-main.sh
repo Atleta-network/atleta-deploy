@@ -5,6 +5,7 @@ set -ue
 source .env
 
 keys_file=$1
+docker_image=$2
 
 container_atleta="validator_stagenet"
 container_node_exporter="node-exporter"
@@ -13,10 +14,9 @@ container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
 root=$(dirname "$(readlink -f "$0")")
-DOCKER_IMAGE="atletanetwork/atleta-node:mainnet-latest"
 validator="VALIDATOR${INDEX}_"
 
-if [ $# -ne 1 ]; then
+if [ $# -ne 2 ]; then
     printf "\033[31m"
     echo "Error: wrong number of arguments"
     printf "\033[0m"
@@ -46,7 +46,7 @@ maybe_cleanup() {
 
 start_node_unsafe() {
     echo "Starting the validator node..."
-    docker pull "$DOCKER_IMAGE"
+    docker pull "$docker_image"
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
         -v "${root}/chain-data":"/chain-data" \
@@ -54,7 +54,7 @@ start_node_unsafe() {
         -p 9944:9944 \
         -p 9615:9615 \
         --platform linux/amd64 \
-        "$DOCKER_IMAGE" \
+        "$docker_image" \
         --validator \
         --chain "/chainspec.json" \
         --node-key "$VALIDATOR_KEY" \
@@ -78,7 +78,7 @@ start_node_unsafe() {
 
 start_node_safe() {
     echo "Starting the validator node..."
-    docker pull "$DOCKER_IMAGE"
+    docker pull "$docker_image"
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
         -v "${root}/chain-data":"/chain-data" \
@@ -86,7 +86,7 @@ start_node_safe() {
         -p 9944:9944 \
         -p 9615:9615 \
         --platform linux/amd64 \
-        "$DOCKER_IMAGE" \
+        "$docker_image" \
         --validator \
         --chain "/chainspec.json" \
         --node-key "$VALIDATOR_KEY" \

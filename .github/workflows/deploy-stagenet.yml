@@ -70,7 +70,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run.sh "atletanetwork/atleta-node:mainnet-latest"
+          ./run.sh atletanetwork/atleta-node:stagenet-latest
 
   deploy_validators:
 
@@ -183,4 +183,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run.sh stagenet.keys.env
+          ./run.sh stagenet.keys.env atletanetwork/atleta-node:stagenet-latest
