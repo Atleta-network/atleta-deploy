@@ -4,19 +4,17 @@ set -ue
 
 source .env
 
-keys_file=$1
-docker_image=$2
+docker_image=$1
 
 container_atleta="validator_stagenet"
 container_node_exporter="node-exporter"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
-rpc_api_endpoint="http://127.0.0.1:9944"
 root=$(dirname "$(readlink -f "$0")")
 validator="VALIDATOR${INDEX}_"
 
-if [ $# -ne 2 ]; then
+if [ $# -ne 1 ]; then
     printf "\033[31m"
     echo "Error: wrong number of arguments"
     printf "\033[0m"
