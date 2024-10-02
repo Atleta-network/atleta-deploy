@@ -1,10 +1,13 @@
-name: Deploy Stagenet
+name: Update Stagenet
 
 on:
   workflow_dispatch:
 
 jobs:
-  deploy_public_bootnode:
+  update_public_bootnode:
+
+    needs: 
+        - update_validators
 
     environment: stagenet
 
@@ -51,13 +54,10 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "sudo mkdir -p /sportchain/atleta"
-        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "sudo chown -R ${{ secrets.BOOT_NODE_USER }}:${{ secrets.BOOT_NODE_USER }} /sportchain"
-        scp stagenet/deploy-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/deploy-bootnode.sh
+        scp stagenet/update-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/update-bootnode.sh
         scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
         scp stagenet/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
         scp stagenet/bootnode.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
         scp stagenet/promtail-config.fill.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/telemetry/process-exporter/process-exporter.yml
 
@@ -69,12 +69,9 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./deploy-bootnode.sh atletanetwork/atleta-node:stagenet-latest
+          ./update-bootnode.sh atletanetwork/atleta-node:stagenet-latest
 
-  deploy_validators:
-
-    needs: 
-      - deploy_public_bootnode
+  update_validators:
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -118,6 +115,8 @@ jobs:
             user_key: VALIDATOR_6_USER
             priv_node_key: VALIDATOR_6_NODE_KEY_PRIV
             pub_node_key: VALIDATOR_6_NODE_KEY_PUB
+            
+            max-parallel: 1
 
     steps:
     - uses: actions/checkout@v4
@@ -165,13 +164,11 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
         scp add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/add-session-keys.sh
-        scp stagenet/deploy-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/deploy-validator.sh
+        scp stagenet/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-validator.sh
         scp stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
         scp stagenet/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
         scp stagenet/promtail-config.fill.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/telemetry/process-exporter/process-exporter.yml
 
@@ -183,4 +180,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./deploy-validator.sh stagenet.keys.env atletanetwork/atleta-node:stagenet-latest
+          ./update-validator.sh stagenet.keys.env atletanetwork/atleta-node:stagenet-latest
