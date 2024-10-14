@@ -194,7 +194,7 @@ jobs:
         echo "BOOTNODE_ADDRESS=${{ secrets.BOOTNODE_P2P_ADDRESS }}" >> config.env
         echo "PRIVATE_NODE_KEY=${{ secrets[matrix.priv_node_key] }}" >> config.env
         echo "PUBLIC_NODE_KEY=${{ secrets[matrix.pub_node_key] }}" >> config.env
-        echo "PUBLIC_NODE_KEY=${{ secrets[matrix.pub_node_key] }}" >> config.env
+        echo "TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}" >> config.env
 
     - name: Substitute environment variables
       env:
