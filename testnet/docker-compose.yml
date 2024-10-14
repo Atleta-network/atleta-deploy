@@ -39,6 +39,7 @@ services:
       --unsafe-rpc-external
       --rpc-methods=Unsafe
       --validator
+      --name "DIEGO"
       --state-pruning archive
       --allow-private-ipv4
       --node-key "$DIEGO_NODE_KEY_PRIV"
@@ -67,6 +68,7 @@ services:
       --unsafe-rpc-external
       --rpc-methods=Unsafe
       --validator
+      --name "PELE"
       --state-pruning archive
       --allow-private-ipv4
       --node-key "$PELE_NODE_KEY_PRIV"
@@ -95,6 +97,7 @@ services:
       --unsafe-rpc-external
       --rpc-methods=Unsafe
       --validator
+      --name "FRANZ"
       --state-pruning archive
       --allow-private-ipv4
       --node-key "$FRANZ_NODE_KEY_PRIV"

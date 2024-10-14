@@ -27,6 +27,7 @@ container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
 root=$(dirname "$(readlink -f "$0")")
+validator="VALIDATOR${INDEX}_"
 
 check_chainspec() {
     if [ ! -f "$chainspec" ]; then
@@ -63,7 +64,7 @@ start_node() {
         "$DOCKER_IMAGE" \
         --chain "/chainspec.json" \
         --validator \
-        --name "Atleta_Validator_14" \
+        --name "$validator" \
         --node-key "$PRIVATE_NODE_KEY" \
         --bootnodes "$BOOTNODE_ADDRESS" \
         --base-path /chain-data \
