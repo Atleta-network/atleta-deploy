@@ -11,18 +11,18 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate sportchain-bootnode
+docker compose --env-file "$node_keys_file" up -d --force-recreate bootnode
 
 sleep 10
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate sportchain-diego
+docker compose --env-file "$node_keys_file" up -d --force-recreate diego
 
 sleep 10
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate sportchain-pele
+docker compose --env-file "$node_keys_file" up -d --force-recreate pele
 
 sleep 10
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate boosportchain-franztnode
+docker compose --env-file "$node_keys_file" up -d --force-recreate franz
 
 echo "Done"
