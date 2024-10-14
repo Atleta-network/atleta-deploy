@@ -52,7 +52,7 @@ maybe_cleanup() {
 start_node() {
     echo "Starting the validator node..."
     docker pull "$DOCKER_IMAGE"
-    docker run -d --name "$container_name" \
+    docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
         -v "$(pwd)/chain-data":"/chain-data" \
         -p 30333:30333 \
