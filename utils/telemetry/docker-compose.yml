@@ -14,7 +14,7 @@ services:
     environment:
       SUBSTRATE_TELEMETRY_URL: ws://${TELEMETRY_HOST}:8000/feed
     ports:
-      - 8081:8000
+      - 80:8000
     restart: unless-stopped
     networks:
       - telemetry-network
@@ -52,11 +52,25 @@ services:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - ./prometheus:/etc/prometheus
+      - ./prometheus/promconfig:/etc/prometheus
     ports:
       - "9090:9090"
     command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    networks:
+      - telemetry-network
+
+  alertmanager:
+    image: prom/alertmanager:latest
+    container_name: alertmanager
+    volumes:
+      - ./alertmanager:/alertmanager/data
+      - ./alertmanager/config:/etc/alertmanager/
+    expose:
+      - "9093"
+    command:
+      - "--config.file=/etc/alertmanager/alertmanager.yml"
+    restart: unless-stopped
     networks:
       - telemetry-network
 
