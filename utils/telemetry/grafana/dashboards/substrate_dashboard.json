@@ -52,6 +52,241 @@
   "panels": [
     {
       "collapsed": false,
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 329,
+      "panels": [],
+      "title": "Alerts",
+      "type": "row"
+    },
+    {
+      "datasource": {
+        "type": "camptocamp-prometheus-alertmanager-datasource",
+        "uid": "ee0d1fmq2pkw0b"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "color": "#299c46",
+                  "text": "0"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 1
+              },
+              {
+                "color": "#d44a3a",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 3,
+        "x": 0,
+        "y": 1
+      },
+      "id": 84,
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "background",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "standard",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": false,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "camptocamp-prometheus-alertmanager-datasource",
+            "uid": "ee0d1fmq2pkw0b"
+          },
+          "inhibited": true,
+          "refId": "A",
+          "silenced": true
+        }
+      ],
+      "title": "All alerts",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "camptocamp-prometheus-alertmanager-datasource",
+        "uid": "ee0d1fmq2pkw0b"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "color-background"
+            },
+            "inspect": false
+          },
+          "decimals": 2,
+          "displayName": "",
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 0
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "displayName",
+                "value": "Time"
+              },
+              {
+                "id": "unit",
+                "value": "time: YYYY-MM-DD HH:mm:ss"
+              },
+              {
+                "id": "custom.align"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "severity"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "short"
+              },
+              {
+                "id": "decimals",
+                "value": 2
+              },
+              {
+                "id": "custom.cellOptions",
+                "value": {
+                  "type": "color-background"
+                }
+              },
+              {
+                "id": "custom.align"
+              },
+              {
+                "id": "thresholds",
+                "value": {
+                  "mode": "absolute",
+                  "steps": [
+                    {
+                      "color": "rgba(50, 172, 45, 0.97)",
+                      "value": null
+                    },
+                    {
+                      "color": "rgba(237, 129, 40, 0.89)",
+                      "value": 1
+                    },
+                    {
+                      "color": "rgba(245, 54, 54, 0.9)",
+                      "value": 2
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 21,
+        "x": 3,
+        "y": 1
+      },
+      "id": 86,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.1.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "camptocamp-prometheus-alertmanager-datasource",
+            "uid": "ee0d1fmq2pkw0b"
+          },
+          "inhibited": true,
+          "refId": "A",
+          "silenced": true
+        }
+      ],
+      "title": "All Alerts Info",
+      "transformations": [
+        {
+          "id": "merge",
+          "options": {
+            "reducers": []
+          }
+        }
+      ],
+      "type": "table"
+    },
+    {
+      "collapsed": false,
       "datasource": {
         "type": "prometheus",
         "uid": "adzk3nkk8ta0wd"
@@ -60,7 +295,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 5
       },
       "id": 50,
       "panels": [],
@@ -125,7 +360,7 @@
         "h": 4,
         "w": 3,
         "x": 0,
-        "y": 1
+        "y": 6
       },
       "id": 54,
       "options": {
@@ -213,7 +448,7 @@
         "h": 4,
         "w": 3,
         "x": 3,
-        "y": 1
+        "y": 6
       },
       "id": 56,
       "options": {
@@ -240,7 +475,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "scalar(node_load1{host=\"$node\",job=\"$job\"}) * 100 / count(count(node_cpu_seconds_total{host=\"$node\",job=\"$job\"}) by (cpu))",
+          "expr": "scalar(node_load1{host=\"$node\",job=\"$job\"}) * 100 / count(count(rate(node_cpu_seconds_total{host=\"$node\",job=\"$job\"}[$__rate_interval])) by (cpu))",
           "format": "time_series",
           "hide": false,
           "intervalFactor": 1,
@@ -292,7 +527,7 @@
         "h": 4,
         "w": 3,
         "x": 6,
-        "y": 1
+        "y": 6
       },
       "hideTimeOverride": false,
       "id": 60,
@@ -396,7 +631,7 @@
         "h": 4,
         "w": 3,
         "x": 9,
-        "y": 1
+        "y": 6
       },
       "id": 64,
       "options": {
@@ -423,7 +658,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "100 - ((node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\",fstype!=\"rootfs\"})",
+          "expr": "100 - ((node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\",fstype!=\"rootfs\"} * 100) / node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\",fstype!=\"rootfs\"})",
           "format": "time_series",
           "intervalFactor": 1,
           "range": true,
@@ -483,7 +718,7 @@
         "h": 4,
         "w": 3,
         "x": 12,
-        "y": 1
+        "y": 6
       },
       "id": 62,
       "options": {
@@ -560,7 +795,7 @@
         "h": 4,
         "w": 2,
         "x": 15,
-        "y": 1
+        "y": 6
       },
       "id": 66,
       "maxDataPoints": 100,
@@ -642,7 +877,7 @@
         "h": 4,
         "w": 2,
         "x": 17,
-        "y": 1
+        "y": 6
       },
       "id": 82,
       "maxDataPoints": 100,
@@ -729,7 +964,7 @@
         "h": 4,
         "w": 2,
         "x": 19,
-        "y": 1
+        "y": 6
       },
       "id": 23,
       "maxDataPoints": 100,
@@ -759,7 +994,7 @@
           },
           "editorMode": "code",
           "exemplar": false,
-          "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\",fstype!=\"rootfs\"}",
+          "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\",fstype!=\"rootfs\"}",
           "format": "time_series",
           "hide": false,
           "instant": true,
@@ -813,7 +1048,7 @@
         "h": 4,
         "w": 3,
         "x": 21,
-        "y": 1
+        "y": 6
       },
       "hideTimeOverride": true,
       "id": 70,
@@ -919,7 +1154,7 @@
         "h": 8,
         "w": 10,
         "x": 0,
-        "y": 5
+        "y": 10
       },
       "id": 7,
       "options": {
@@ -1125,7 +1360,7 @@
         "h": 14,
         "w": 14,
         "x": 10,
-        "y": 5
+        "y": 10
       },
       "id": 324,
       "options": {
@@ -1247,7 +1482,7 @@
         "h": 18,
         "w": 10,
         "x": 0,
-        "y": 13
+        "y": 18
       },
       "id": 306,
       "options": {
@@ -1383,7 +1618,7 @@
         "h": 12,
         "w": 14,
         "x": 10,
-        "y": 19
+        "y": 24
       },
       "id": 88,
       "options": {
@@ -1728,7 +1963,7 @@
         "h": 11,
         "w": 10,
         "x": 0,
-        "y": 31
+        "y": 36
       },
       "id": 156,
       "options": {
@@ -2150,7 +2385,7 @@
         "h": 11,
         "w": 14,
         "x": 10,
-        "y": 31
+        "y": 36
       },
       "id": 325,
       "options": {
@@ -2178,7 +2413,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"}",
+          "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\"}",
           "format": "time_series",
           "hide": false,
           "instant": false,
@@ -2194,7 +2429,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"} - node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"}",
+          "expr": "node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\"} - node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2210,7 +2445,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"}",
+          "expr": "node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\"}",
           "format": "time_series",
           "hide": false,
           "interval": "",
@@ -2226,7 +2461,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "(1 - (node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"} / (node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/etc/hostname\"})))* 100",
+          "expr": "(1 - (node_filesystem_avail_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\"} / (node_filesystem_size_bytes{host=\"$node\",job=\"$job\",mountpoint=\"/\"})))* 100",
           "format": "time_series",
           "hide": false,
           "interval": "30m",
@@ -2249,7 +2484,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 47
       },
       "id": 52,
       "panels": [],
@@ -2305,7 +2540,7 @@
         "h": 4,
         "w": 11,
         "x": 0,
-        "y": 43
+        "y": 48
       },
       "id": 26,
       "options": {
@@ -2410,7 +2645,7 @@
         "h": 9,
         "w": 13,
         "x": 11,
-        "y": 43
+        "y": 48
       },
       "id": 14,
       "options": {
@@ -2477,7 +2712,7 @@
         "h": 5,
         "w": 11,
         "x": 0,
-        "y": 47
+        "y": 52
       },
       "id": 28,
       "options": {
@@ -2582,7 +2817,7 @@
         "h": 6,
         "w": 12,
         "x": 0,
-        "y": 52
+        "y": 57
       },
       "id": 18,
       "options": {
@@ -2682,7 +2917,7 @@
         "h": 6,
         "w": 12,
         "x": 12,
-        "y": 52
+        "y": 57
       },
       "id": 15,
       "options": {
@@ -2780,7 +3015,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 58
+        "y": 63
       },
       "id": 24,
       "options": {
@@ -2903,7 +3138,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 58
+        "y": 63
       },
       "id": 36,
       "options": {
@@ -3002,7 +3237,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 66
+        "y": 71
       },
       "id": 10,
       "interval": "",
@@ -3026,7 +3261,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "increase(substrate_block_height{host=\"[[instance]]\",chain=\"[[network]]\",status=~\"finalized|sync_target\"}[1m])",
+          "expr": "increase(substrate_block_height{host=\"[[instance]]\",chain=\"[[network]]\",status=~\"finalized|best\"}[1m])",
           "intervalFactor": 5,
           "legendFormat": "{{status}}",
           "range": true,
@@ -3102,7 +3337,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 66
+        "y": 71
       },
       "id": 8,
       "options": {
@@ -3200,7 +3435,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 73
+        "y": 78
       },
       "id": 92,
       "options": {
@@ -3298,7 +3533,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 73
+        "y": 78
       },
       "id": 22,
       "options": {
@@ -3426,10 +3661,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 80
+        "y": 85
       },
       "id": 90,
       "options": {
@@ -3528,7 +3763,7 @@
         "h": 10,
         "w": 12,
         "x": 12,
-        "y": 80
+        "y": 85
       },
       "id": 17,
       "options": {
@@ -3624,9 +3859,9 @@
       },
       "gridPos": {
         "h": 6,
-        "w": 6,
+        "w": 12,
         "x": 0,
-        "y": 90
+        "y": 93
       },
       "id": 34,
       "options": {
@@ -3722,12 +3957,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 6,
-        "y": 90
+        "h": 9,
+        "w": 12,
+        "x": 12,
+        "y": 95
       },
-      "id": 20,
+      "id": 332,
       "options": {
         "legend": {
           "calcs": [],
@@ -3749,7 +3984,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "substrate_ready_transactions_number{host=\"[[instance]]\",chain=\"[[network]]\"}",
+          "expr": "rate(substrate_sub_libp2p_connections_opened_total{host=\"[[instance]]\",chain=\"[[network]]\"}[1m])",
           "hide": false,
           "legendFormat": "{{instance}}",
           "range": true,
@@ -3758,7 +3993,7 @@
           "type": "timeseries"
         }
       ],
-      "title": "TXs Count",
+      "title": "Active P2P connections per 1 minute",
       "type": "timeseries"
     },
     {
@@ -3824,12 +4059,12 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 6,
-        "w": 6,
-        "x": 12,
-        "y": 90
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 99
       },
-      "id": 332,
+      "id": 20,
       "options": {
         "legend": {
           "calcs": [],
@@ -3851,7 +4086,7 @@
             "uid": "adzk3nkk8ta0wd"
           },
           "editorMode": "code",
-          "expr": "substrate_sub_libp2p_connections_opened_total{host=\"[[instance]]\",chain=\"[[network]]\"}",
+          "expr": "substrate_ready_transactions_number{host=\"[[instance]]\",chain=\"[[network]]\"}",
           "hide": false,
           "legendFormat": "{{instance}}",
           "range": true,
@@ -3860,261 +4095,11 @@
           "type": "timeseries"
         }
       ],
-      "title": "Active P2P connections",
+      "title": "TXs Count",
       "type": "timeseries"
-    },
-    {
-      "collapsed": true,
-      "gridPos": {
-        "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 96
-      },
-      "id": 329,
-      "panels": [
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS_ALERTMANAGER}"
-          },
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "mappings": [
-                {
-                  "options": {
-                    "match": "null",
-                    "result": {
-                      "color": "#299c46",
-                      "text": "0"
-                    }
-                  },
-                  "type": "special"
-                }
-              ],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "#299c46"
-                  },
-                  {
-                    "color": "rgba(237, 129, 40, 0.89)",
-                    "value": 1
-                  },
-                  {
-                    "color": "#d44a3a",
-                    "value": 5
-                  }
-                ]
-              },
-              "unit": "none"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 3,
-            "x": 0,
-            "y": 106
-          },
-          "id": 84,
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "background",
-            "graphMode": "none",
-            "justifyMode": "auto",
-            "orientation": "horizontal",
-            "percentChangeColorMode": "standard",
-            "reduceOptions": {
-              "calcs": [
-                "lastNotNull"
-              ],
-              "fields": "",
-              "values": false
-            },
-            "showPercentChange": false,
-            "textMode": "auto",
-            "wideLayout": true
-          },
-          "pluginVersion": "11.1.4",
-          "targets": [
-            {
-              "annotations": false,
-              "datasource": {
-                "uid": "${DS_PROMETHEUS_ALERTMANAGER}"
-              },
-              "expr": "",
-              "labelSelector": "*",
-              "legendFormat": "",
-              "refId": "A",
-              "target": "Query",
-              "type": "single"
-            }
-          ],
-          "title": "All alerts",
-          "type": "stat"
-        },
-        {
-          "datasource": {
-            "uid": "${DS_PROMETHEUS_ALERTMANAGER}"
-          },
-          "fieldConfig": {
-            "defaults": {
-              "custom": {
-                "align": "auto",
-                "cellOptions": {
-                  "type": "color-background"
-                },
-                "inspect": false
-              },
-              "decimals": 2,
-              "displayName": "",
-              "mappings": [],
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "rgba(245, 54, 54, 0.9)"
-                  },
-                  {
-                    "color": "rgba(237, 129, 40, 0.89)",
-                    "value": 0
-                  }
-                ]
-              },
-              "unit": "short"
-            },
-            "overrides": [
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "Time"
-                },
-                "properties": [
-                  {
-                    "id": "displayName",
-                    "value": "Time"
-                  },
-                  {
-                    "id": "unit",
-                    "value": "time: YYYY-MM-DD HH:mm:ss"
-                  },
-                  {
-                    "id": "custom.align"
-                  }
-                ]
-              },
-              {
-                "matcher": {
-                  "id": "byName",
-                  "options": "severity"
-                },
-                "properties": [
-                  {
-                    "id": "unit",
-                    "value": "short"
-                  },
-                  {
-                    "id": "decimals",
-                    "value": 2
-                  },
-                  {
-                    "id": "custom.cellOptions",
-                    "value": {
-                      "type": "color-background"
-                    }
-                  },
-                  {
-                    "id": "custom.align"
-                  },
-                  {
-                    "id": "thresholds",
-                    "value": {
-                      "mode": "absolute",
-                      "steps": [
-                        {
-                          "color": "rgba(50, 172, 45, 0.97)"
-                        },
-                        {
-                          "color": "rgba(237, 129, 40, 0.89)",
-                          "value": 1
-                        },
-                        {
-                          "color": "rgba(245, 54, 54, 0.9)",
-                          "value": 2
-                        }
-                      ]
-                    }
-                  }
-                ]
-              }
-            ]
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 21,
-            "x": 3,
-            "y": 106
-          },
-          "id": 86,
-          "options": {
-            "cellHeight": "sm",
-            "footer": {
-              "countRows": false,
-              "fields": "",
-              "reducer": [
-                "sum"
-              ],
-              "show": false
-            },
-            "showHeader": true
-          },
-          "pluginVersion": "11.1.4",
-          "targets": [
-            {
-              "annotations": true,
-              "datasource": {
-                "uid": "${DS_PROMETHEUS_ALERTMANAGER}"
-              },
-              "expr": "",
-              "hide": false,
-              "labelSelector": "*",
-              "legendFormat": "{{ summary }}",
-              "refId": "A",
-              "target": "Query",
-              "type": "table"
-            },
-            {
-              "annotations": false,
-              "datasource": {
-                "uid": "${DS_PROMETHEUS_ALERTMANAGER}"
-              },
-              "expr": "",
-              "labelSelector": "*",
-              "legendFormat": "{{ instance }}",
-              "refId": "B",
-              "target": "Query",
-              "type": "table"
-            }
-          ],
-          "title": "All Alerts Info",
-          "transformations": [
-            {
-              "id": "merge",
-              "options": {
-                "reducers": []
-              }
-            }
-          ],
-          "type": "table"
-        }
-      ],
-      "title": "Alerts",
-      "type": "row"
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 39,
   "tags": [],
   "templating": {
@@ -4122,8 +4107,8 @@
       {
         "current": {
           "selected": false,
-          "text": "mainnet",
-          "value": "mainnet"
+          "text": "stagenet",
+          "value": "stagenet"
         },
         "datasource": {
           "type": "prometheus",
@@ -4153,25 +4138,25 @@
       },
       {
         "current": {
-          "selected": false,
-          "text": "172.99.188.229",
-          "value": "172.99.188.229"
+          "selected": true,
+          "text": "validator_2",
+          "value": "validator_2"
         },
         "datasource": {
           "type": "prometheus",
           "uid": "adzk3nkk8ta0wd"
         },
-        "definition": "label_values(substrate_build_info{chain=\"$network\"},host)",
-        "description": "Chain instance server host - default value: localhost:9615",
+        "definition": "label_values(node_uname_info{chain=\"$network\"},job)",
+        "description": "Node exporter server job - default value: node_exporter",
         "hide": 0,
         "includeAll": false,
-        "label": "Chain Instance Host",
+        "label": "Exporter Job",
         "multi": false,
-        "name": "instance",
+        "name": "job",
         "options": [],
         "query": {
           "qryType": 1,
-          "query": "label_values(substrate_build_info{chain=\"$network\"},host)",
+          "query": "label_values(node_uname_info{chain=\"$network\"},job)",
           "refId": "PrometheusVariableQueryEditor-VariableQuery"
         },
         "refresh": 1,
@@ -4186,8 +4171,40 @@
       {
         "current": {
           "selected": false,
-          "text": "172.99.188.229",
-          "value": "172.99.188.229"
+          "text": "67.220.74.245",
+          "value": "67.220.74.245"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "adzk3nkk8ta0wd"
+        },
+        "definition": "label_values(substrate_build_info{job=\"$job\"},host)",
+        "description": "Chain instance server host - default value: localhost:9615",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Chain Instance Host",
+        "multi": false,
+        "name": "instance",
+        "options": [],
+        "query": {
+          "qryType": 1,
+          "query": "label_values(substrate_build_info{job=\"$job\"},host)",
+          "refId": "PrometheusVariableQueryEditor-VariableQuery"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "67.220.74.245",
+          "value": "67.220.74.245"
         },
         "datasource": {
           "type": "prometheus",
@@ -4210,38 +4227,6 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
-        "tagValuesQuery": "",
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "current": {
-          "selected": false,
-          "text": "validator_5",
-          "value": "validator_5"
-        },
-        "datasource": {
-          "type": "prometheus",
-          "uid": "adzk3nkk8ta0wd"
-        },
-        "definition": "label_values(node_uname_info{host=\"$node\"},job)",
-        "description": "Node exporter server job - default value: node_exporter",
-        "hide": 0,
-        "includeAll": false,
-        "label": "Exporter Job",
-        "multi": false,
-        "name": "job",
-        "options": [],
-        "query": {
-          "qryType": 1,
-          "query": "label_values(node_uname_info{host=\"$node\"},job)",
-          "refId": "PrometheusVariableQueryEditor-VariableQuery"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
         "tagValuesQuery": "",
         "tagsQuery": "",
         "type": "query",
@@ -4291,6 +4276,6 @@
   "timezone": "",
   "title": "Substrate Dashboard (stagenet)",
   "uid": "ddw06wc9k4p34b",
-  "version": 4,
+  "version": 18,
   "weekStart": ""
 }
