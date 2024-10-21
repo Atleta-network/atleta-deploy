@@ -47,7 +47,7 @@ jobs:
       env:
         LOKI_HOST: ${{ secrets.LOKI_HOST }}
       run: |
-        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.fill.yml 
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.yml 
         
     - name: Copy files to the server
       run: |
@@ -58,7 +58,7 @@ jobs:
         scp stagenet/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
         scp stagenet/bootnode.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/.env
         ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
-        scp stagenet/promtail-config.fill.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp stagenet/promtail-config.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: Run bootnode
@@ -154,7 +154,7 @@ jobs:
       env:
         LOKI_HOST: ${{ secrets.LOKI_HOST }}
       run: |
-        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.fill.yml
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.yml
 
     - name: Prepare .env files
       run: |
@@ -172,7 +172,7 @@ jobs:
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
         scp stagenet/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
         ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
-        scp stagenet/promtail-config.fill.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp stagenet/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy

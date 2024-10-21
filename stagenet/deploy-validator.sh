@@ -73,7 +73,7 @@ start_node_unsafe() {
         --enable-log-reloading \
         --max-runtime-instances 32 \
         --rpc-max-connections 10000 \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 0"
+        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 1"
 }
 
 start_node_safe() {

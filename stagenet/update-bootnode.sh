@@ -72,7 +72,7 @@ start_node() {
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --prometheus-external \
         --prometheus-port 9615 \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 0"
+        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 1"
 }
 
 start_node_exporter() {
