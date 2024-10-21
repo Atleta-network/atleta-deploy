@@ -1,0 +1,56 @@
+groups:
+  - name: stagenet
+    rules:
+      - alert: Host is Down
+        expr: up{instance=~".*:9100"} == 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Instance {{ $labels.host }} is down"
+          description: "{{ $labels.host }} of job {{ $labels.job }} has been down for more than 1 minute."
+      
+      - alert: High CPU usage 
+        expr: 100 * (1 - avg by (instance, host, chain, job) (rate(node_cpu_seconds_total{instance=~".*:9100",mode="idle"}[1m]))) > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High CPU usage on {{ $labels.host }}"
+          description: "Instance {{ $labels.host }} has CPU usage over 90%."
+      
+      - alert: High memory usage 
+        expr: 100 * (1 - (avg by (instance, host, chain, job) (node_memory_MemAvailable_bytes{instance=~".*:9100"}) / avg by (instance, host, chain, job) (node_memory_MemTotal_bytes{instance=~".*:9100"})))  > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High memory usage on {{ $labels.host }}"
+          description: "Instance {{ $labels.host }} has more than 90% RAM usage."
+      
+      - alert: High disk usage
+        expr: 100 * (1 - (avg by (instance, host, chain, job) (node_filesystem_avail_bytes{instance=~".*:9100", mountpoint=~"/"}) / avg by (instance, host, chain, job) (node_filesystem_size_bytes{instance=~".*:9100", mountpoint=~"/"}))) > 90
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High disk usage on {{ $labels.host }}"
+          description: "Instance {{ $labels.host }} has more than 90% disk usage."
+
+      - alert: Slow block finalisation
+        expr: avg by (chain) (increase(substrate_block_height{status="finalized", chain=~".*"}[1m])) < 8
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Block finalisation is slow on chain {{ $labels.chain }}"
+          description: "Chain {{ $labels.chain }} has block finalisation slower than 6 seconds"
+
+      - alert: High discrepancy between blocks
+        expr: (avg by (chain) (increase(substrate_block_height{status="best", chain=~".*"}[1m]))) - (avg by (chain) (increase(substrate_block_height{status="finalized", chain=~".*"}[1m]))) > 10
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Discrepancy between blocks is high on chain {{ $labels.chain }}"
+          description: "Chain {{ $labels.chain }} has a discrepancy of more than 10 between best and finalized blocks"
