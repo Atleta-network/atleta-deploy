@@ -70,7 +70,7 @@ start_node() {
         --rpc-port 9944 \
         --unsafe-rpc-external \
         --rpc-methods=safe \
-        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1" \
+        --telemetry-url "wss://${TELEMETRY_DOMAIN}/submit 1" \
 	    --prometheus-external \
         --rpc-cors all \
         --allow-private-ipv4 \

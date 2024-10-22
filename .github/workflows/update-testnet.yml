@@ -208,7 +208,7 @@ jobs:
         echo "PRIVATE_NODE_KEY=${{ secrets[matrix.priv_node_key] }}" >> config.env
         echo "PUBLIC_NODE_KEY=${{ secrets[matrix.pub_node_key] }}" >> config.env
         echo "INDEX=${{ matrix.node_index }}" >> config.env
-        echo "TELEMETRY_HOST=${{ secrets.TELEMETRY_HOST }}" >> config.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> config.env
 
     - name: Substitute environment variables
       env:
