@@ -8,7 +8,6 @@ source bootnode-keys.env
 
 container_atleta="bootnode"
 chainspec="./chainspec.json"
-container_node_exporter="node-exporter"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
 root=$(dirname "$(readlink -f "$0")")
@@ -72,19 +71,7 @@ start_node() {
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --prometheus-external \
         --prometheus-port 9615 \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 1"
-}
-
-start_node_exporter() {
-    if [ ! "$(docker ps -q -f name=$container_node_exporter)" ]; then
-        echo "Starting the node_exporter..."
-        docker pull prom/node-exporter:latest
-        docker run -d --name "$container_node_exporter" \
-            -p 9100:9100 \
-            prom/node-exporter:latest
-    else
-        echo "Node_exporter is already running."
-    fi
+        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
 }
 
 start_process_exporter() {
@@ -124,7 +111,6 @@ check_chainspec
 maybe_cleanup
 start_node
 
-start_node_exporter
 start_process_exporter
 start_promtail
 

@@ -8,7 +8,6 @@ keys_file=$1
 docker_image=$2
 
 container_atleta="validator_stagenet"
-container_node_exporter="node-exporter"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
@@ -31,7 +30,7 @@ check_chainspec() {
 }
 
 maybe_cleanup() {
-    containers=("$container_atleta" "$container_node_exporter" "$container_process_exporter" "$container_promtail")
+    containers=("$container_atleta" "$container_process_exporter" "$container_promtail")
 
     for container in "${containers[@]}"; do
         if [ "$(docker ps -aq -f name="$container")" ]; then
@@ -73,7 +72,7 @@ start_node_unsafe() {
         --enable-log-reloading \
         --max-runtime-instances 32 \
         --rpc-max-connections 10000 \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 1"
+        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
 }
 
 start_node_safe() {
@@ -105,16 +104,7 @@ start_node_safe() {
         --enable-log-reloading \
         --max-runtime-instances 32 \
         --rpc-max-connections 10000 \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 0"
-}
-
-start_node_exporter() {
-
-    echo "Starting the node_exporter..."
-    docker pull prom/node-exporter:latest
-    docker run -d --name "$container_node_exporter" \
-        -p 9100:9100 \
-        prom/node-exporter:latest
+        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
 }
 
 start_process_exporter() {
@@ -154,7 +144,6 @@ sleep 30
 maybe_cleanup
 start_node_safe
 
-start_node_exporter
 start_process_exporter
 start_promtail
 

@@ -7,7 +7,6 @@ source .env
 docker_image=$1
 
 container_atleta="validator_stagenet"
-container_node_exporter="node-exporter"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
@@ -71,19 +70,7 @@ start_node_safe() {
         --enable-log-reloading \
         --max-runtime-instances 32 \
         --rpc-max-connections 10000 \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 1"
-}
-
-start_node_exporter() {
-    if [ ! "$(docker ps -q -f name=$container_node_exporter)" ]; then
-        echo "Starting the node_exporter..."
-        docker pull prom/node-exporter:latest
-        docker run -d --name "$container_node_exporter" \
-            -p 9100:9100 \
-            prom/node-exporter:latest
-    else
-        echo "Node_exporter is already running."
-    fi
+        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
 }
 
 start_process_exporter() {
@@ -122,7 +109,6 @@ maybe_cleanup
 
 start_node_safe
 
-start_node_exporter
 start_process_exporter
 start_promtail
 
