@@ -21,7 +21,6 @@ set -u
 source ./config.env
 
 container_atleta="honest_worker"
-container_node_exporter="node_exporter"
 container_process_exporter="process_exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
@@ -37,7 +36,7 @@ check_chainspec() {
 }
 
 maybe_cleanup() {
-    containers=("$container_atleta" "$container_node_exporter" "$container_process_exporter" "$container_promtail")
+    containers=("$container_atleta" "$container_process_exporter" "$container_promtail")
 
     for container in "${containers[@]}"; do
         if [ "$(docker ps -aq -f name="$container")" ]; then
@@ -71,7 +70,7 @@ start_node() {
         --rpc-port 9944 \
         --unsafe-rpc-external \
         --rpc-methods=safe \
-        --telemetry-url "ws://${TELEMETRY_HOST}:8001/submit 1" \
+        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1" \
 	    --prometheus-external \
         --rpc-cors all \
         --allow-private-ipv4 \
@@ -80,15 +79,6 @@ start_node() {
         --enable-log-reloading \
         --max-runtime-instances 32 \
         --rpc-max-connections 10000
-}
-
-start_node_exporter() {
-
-    echo "Starting the node_exporter..."
-    docker pull prom/node-exporter:latest
-    docker run -d --name "$container_node_exporter" \
-        -p 9100:9100 \
-        prom/node-exporter:latest
 }
 
 start_process_exporter() {
@@ -145,7 +135,6 @@ wait_availability() {
 check_chainspec
 maybe_cleanup
 start_node
-start_node_exporter
 start_process_exporter
 start_promtail
 wait_availability
