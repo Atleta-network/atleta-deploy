@@ -72,7 +72,7 @@ start_node() {
         --prometheus-external \
         --prometheus-port 9615 \
         --rpc-cors all \
-        --telemetry-url 'wss://${TELEMETRY_HOST}/submit 1' \
+        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1" \
         --allow-private-ipv4 \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --state-pruning archive \

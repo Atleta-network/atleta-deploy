@@ -12,7 +12,7 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
-docker compose --env-file "$node_keys_file" up -d
+docker compose --env-file "$node_keys_file" up -d --remove-orphans
 
 sleep 30
 

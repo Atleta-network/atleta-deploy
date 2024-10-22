@@ -11,18 +11,18 @@ if [ $# -ne 1 ]; then
     exit 1
 fi
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate bootnode
+docker compose --env-file "$node_keys_file" up -d --remove-orphans --force-recreate bootnode
 
 sleep 10
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate diego
+docker compose --env-file "$node_keys_file" up -d --remove-orphans --force-recreate diego
 
 sleep 10
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate pele
+docker compose --env-file "$node_keys_file" up -d --remove-orphans --force-recreate pele
 
 sleep 10
 
-docker compose --env-file "$node_keys_file" up -d --force-recreate franz
+docker compose --env-file "$node_keys_file" up -d --remove-orphans --force-recreate franz
 
 echo "Done"
