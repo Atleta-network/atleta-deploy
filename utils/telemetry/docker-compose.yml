@@ -53,8 +53,8 @@ services:
     container_name: prometheus
     volumes:
       - ./prometheus/promconfig:/etc/prometheus
-    ports:
-      - "9090:9090"
+    expose:
+      - 9090
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
     networks:
@@ -67,7 +67,7 @@ services:
       - ./alertmanager:/alertmanager/data
       - ./alertmanager/config:/etc/alertmanager/
     expose:
-      - "9093"
+      - 9093
     command:
       - "--config.file=/etc/alertmanager/alertmanager.yml"
     restart: unless-stopped
@@ -82,7 +82,7 @@ services:
       - GF_SERVER_ROOT_URL=/grafana
       - GF_SERVER_SERVE_FROM_SUB_PATH=true
     ports:
-      - "3000"
+      - 3000
     volumes:
       - grafana-data:/var/lib/grafana
     networks:
@@ -91,8 +91,8 @@ services:
   loki:
     image: grafana/loki:latest
     container_name: loki
-    ports:
-      - "3100:3100"
+    expose:
+      - 3100
     command: -config.file=/etc/config/loki-config.yml
     volumes:
       - ./loki/loki-config.yml:/etc/config/loki-config.yml
@@ -119,11 +119,12 @@ services:
       - ./certbot/www/:/var/www/certbot/:ro
       - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
     depends_on:
       - telemetry-frontend
       - grafana
+      - loki
     restart: always
     networks:
       - telemetry-network
