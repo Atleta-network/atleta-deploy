@@ -26,6 +26,7 @@ container_promtail="promtail"
 chainspec="./chainspec.json"
 rpc_api_endpoint="http://127.0.0.1:9944"
 root=$(dirname "$(readlink -f "$0")")
+validator="VALIDATOR${INDEX}_"
 
 check_chainspec() {
     if [ ! -f "$chainspec" ]; then
@@ -53,7 +54,7 @@ start_node() {
     docker pull "$DOCKER_IMAGE"
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
-        -v "${root}/chain-data":"/chain-data" \
+        -v "$(pwd)/chain-data":"/chain-data" \
         -p 30333:30333 \
         -p 9944:9944 \
         -p 9615:9615 \
@@ -62,17 +63,16 @@ start_node() {
         "$DOCKER_IMAGE" \
         --chain "/chainspec.json" \
         --validator \
-        --name "Atleta Validator" \
+        --name "$validator" \
         --node-key "$PRIVATE_NODE_KEY" \
         --bootnodes "$BOOTNODE_ADDRESS" \
         --base-path /chain-data \
         --rpc-port 9944 \
         --unsafe-rpc-external \
         --rpc-methods=safe \
-        --prometheus-external \
-        --prometheus-port 9615 \
-        --rpc-cors all \
         --telemetry-url "wss://${TELEMETRY_DOMAIN}/submit 1" \
+	    --prometheus-external \
+        --rpc-cors all \
         --allow-private-ipv4 \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --state-pruning archive \
