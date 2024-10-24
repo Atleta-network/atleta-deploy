@@ -4,8 +4,6 @@ set -ue
 
 source cleanup.env
 
-root=$(dirname "$(readlink -f "$0")")
-
 maybe_cleanup_containers() {
     containers=("$container_atleta" "$container_process_exporter" "$container_promtail")
 
