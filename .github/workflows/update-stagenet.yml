@@ -41,24 +41,25 @@ jobs:
 
     - name: Prepare variables
       run: |
-        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> stagenet/bootnode-keys.env
-        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/bootnode-keys.env
-        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/bootnode-keys.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/bootnode.env
+        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> stagenet/update/bootnode-keys.env
+        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/update/bootnode-keys.env
+        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/update/bootnode-keys.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/update/bootnode.env
+        echo "container_atleta=bootnode" >> stagenet/update/bootnode.env
 
     - name: Substitute environment variables
       env:
         LOKI_HOST: ${{ secrets.LOKI_HOST }}
       run: |
-        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.yml 
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/update/promtail-config.yml 
         
     - name: Copy files to the server
       run: |
-        scp stagenet/update-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/update-bootnode.sh
+        scp stagenet/update/update-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/update-bootnode.sh
         scp chain-spec.stagenet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
-        scp stagenet/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
-        scp stagenet/bootnode.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/.env
-        scp stagenet/promtail-config.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp stagenet/update/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
+        scp stagenet/update/bootnode.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/.env
+        scp stagenet/update/promtail-config.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: Run bootnode
@@ -145,31 +146,27 @@ jobs:
         mkdir chainspecs
         wget -O chainspecs/chain-spec.stagenet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/stagenet/chainspecs/chain-spec.stagenet.json
       
-    - name: Make Keys File
-      run: |
-        echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > stagenet.keys.env
-
     - name: Substitute environment variables
       env:
         LOKI_HOST: ${{ secrets.LOKI_HOST }}
       run: |
-        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.yml
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/update/promtail-config.yml
 
     - name: Prepare .env files
       run: |
-        echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/validator.env
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/validator.env
-        echo "INDEX=${{ matrix.node_index }}" >> stagenet/validator.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/validator.env
+        echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/update/validator.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/update/validator.env
+        echo "INDEX=${{ matrix.node_index }}" >> stagenet/update/validator.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/update/validator.env
+        echo "container_atleta=validator_stagenet" >> stagenet/update/validator.env
 
     - name: Copy Files to Server
       run: |
-        scp add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/add-session-keys.sh
-        scp stagenet/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-validator.sh
-        scp stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
+        scp stagenet/update/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-validator.sh
+        scp stagenet/update/stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp stagenet/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp stagenet/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp stagenet/update/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp stagenet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy
@@ -239,21 +236,21 @@ jobs:
       env:
         LOKI_HOST: ${{ secrets.LOKI_HOST }}
       run: |
-        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/promtail-config.yml
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/update/promtail-config.yml
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/rpc-node.env
-        echo "INDEX=${{ matrix.node_index }}" >> stagenet/rpc-node.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/rpc-node.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/update/rpc-node.env
+        echo "INDEX=${{ matrix.node_index }}" >> stagenet/update/rpc-node.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/update/rpc-node.env
+        echo "container_atleta=rpc_stagenet" >> stagenet/update/rpc-node.env
 
     - name: Copy Files to Server
       run: |
-        scp add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/add-session-keys.sh
-        scp stagenet/run-rpc-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-rpc-node.sh
+        scp stagenet/deploy/run-rpc-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-rpc-node.sh
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp stagenet/rpc-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp stagenet/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp stagenet/update/rpc-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp stagenet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy

@@ -6,7 +6,6 @@ set -u
 source .env
 source bootnode-keys.env
 
-container_atleta="bootnode"
 chainspec="./chainspec.json"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
@@ -37,7 +36,7 @@ check_chainspec() {
 }
 
 maybe_cleanup() {
-    containers=("$container_atleta")
+    containers=("$container_atleta" "$container_process_exporter" "$container_promtail")
 
     for container in "${containers[@]}"; do
         if [ "$(docker ps -aq -f name="$container")" ]; then
@@ -75,35 +74,30 @@ start_node() {
 }
 
 start_process_exporter() {
-    if [ ! "$(docker ps -q -f name=$container_process_exporter)" ]; then
-        echo "Starting the process_exporter..."
-        docker pull ncabatoff/process-exporter:latest
-        docker run -d --name "$container_process_exporter" \
-            -v "${root}/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
-            -v /proc:/host/proc:ro \
-            -p 9256:9256 \
-            ncabatoff/process-exporter:latest \
-            --config.path=/config/process-exporter.yml \
-            --procfs=/host/proc
-    else
-        echo "Process_exporter is already running."
-    fi
+
+    echo "Starting the process_exporter..."
+
+    docker pull ncabatoff/process-exporter:latest
+    docker run -d --name "$container_process_exporter" \
+        -v "${root}/process-exporter/process-exporter.yml:/config/process-exporter.yml:ro" \
+        -v /proc:/host/proc:ro \
+        -p 9256:9256 \
+        ncabatoff/process-exporter:latest \
+        --config.path=/config/process-exporter.yml \
+        --procfs=/host/proc
 }
 
 start_promtail() {
-    if [ ! "$(docker ps -q -f name=$container_promtail)" ]; then
-        echo "Starting the promtail..."
-        docker pull grafana/promtail:latest
-        docker run -d --name "$container_promtail" \
-            -p 9080:9080 \
-            -v "${root}/promtail/promtail-config.yml:/etc/config/promtail-config.yml" \
-            -v /var/log:/var/log \
-            -v /var/run/docker.sock:/var/run/docker.sock \
-            grafana/promtail:latest \
-            -config.file=/etc/config/promtail-config.yml
-    else
-        echo "Promtail is already running."
-    fi
+
+    echo "Starting the promtail..."
+    docker pull grafana/promtail:latest
+    docker run -d --name "$container_promtail" \
+         -p 9080:9080 \
+         -v "${root}/promtail/promtail-config.yml:/etc/config/promtail-config.yml" \
+         -v /var/log:/var/log \
+         -v /var/run/docker.sock:/var/run/docker.sock \
+         grafana/promtail:latest \
+         -config.file=/etc/config/promtail-config.yml
 }
 
 check_args

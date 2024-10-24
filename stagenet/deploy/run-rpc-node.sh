@@ -6,7 +6,6 @@ source .env
 
 docker_image=$1
 
-container_atleta="validator_stagenet"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"
@@ -52,9 +51,7 @@ start_node_safe() {
         -p 9615:9615 \
         --platform linux/amd64 \
         "$docker_image" \
-        --validator \
         --chain "/chainspec.json" \
-        --node-key "$VALIDATOR_KEY" \
         --name "$validator" \
         --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --base-path /chain-data \
@@ -74,7 +71,7 @@ start_node_safe() {
 }
 
 start_process_exporter() {
-    if [ ! "$(docker ps -q -f name=$container_process_exporter)" ]; then
+    if [ ! "$(docker ps -aq -f name=$container_process_exporter)" ]; then
         echo "Starting the process_exporter..."
         docker pull ncabatoff/process-exporter:latest
         docker run -d --name "$container_process_exporter" \
@@ -90,7 +87,7 @@ start_process_exporter() {
 }
 
 start_promtail() {
-    if [ ! "$(docker ps -q -f name=$container_promtail)" ]; then
+    if [ ! "$(docker ps -aq -f name=$container_promtail)" ]; then
         echo "Starting the promtail..."
         docker pull grafana/promtail:latest
         docker run -d --name "$container_promtail" \

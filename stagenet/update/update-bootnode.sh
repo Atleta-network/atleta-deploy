@@ -1,24 +1,32 @@
 #!/bin/bash
+# Runs a boot node.
 
-set -ue
+set -u
 
 source .env
+source bootnode-keys.env
 
-docker_image=$1
-
-container_atleta="rpc_stagenet"
+chainspec="./chainspec.json"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
-chainspec="./chainspec.json"
 root=$(dirname "$(readlink -f "$0")")
-validator="VALIDATOR${INDEX}_"
+num_of_args=$#
+docker_image=$1
 
-if [ $# -ne 1 ]; then
-    printf "\033[31m"
-    echo "Error: wrong number of arguments"
-    printf "\033[0m"
-    exit 1
-fi
+check_args() {
+    if [ $num_of_args -ne 1 ]; then
+        printf "\033[31m"
+        echo "Error: wrong number of arguments"
+        printf "\033[0m"
+        usage
+        exit 1
+    fi
+}
+
+usage() {
+    echo "Usage: ./run-bootnode.sh <DOCKER_IMAGE>"
+    printf "\t<DOCKER_IMAGE>         node docker image to use\n"
+}
 
 check_chainspec() {
     if [ ! -f "$chainspec" ]; then
@@ -41,38 +49,32 @@ maybe_cleanup() {
     done
 }
 
-start_node_safe() {
+start_node() {
     echo "Starting the validator node..."
-    docker pull "$docker_image"
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
-        -v "${root}/chain-data":"/chain-data" \
+        -v "$(pwd)/chain-data":"/chain-data" \
         -p 30333:30333 \
-        -p 9944:9944 \
         -p 9615:9615 \
         --platform linux/amd64 \
+        --restart always \
         "$docker_image" \
         --chain "/chainspec.json" \
-        --name "$validator" \
-        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
+        --name "Atleta Bootnode" \
         --base-path /chain-data \
-        --rpc-port 9944 \
-        --rpc-methods=safe \
-        --unsafe-rpc-external \
+        --allow-private-ipv4 \
+        --validator \
+        --state-pruning archive \
+        --listen-addr /ip4/0.0.0.0/tcp/30333 \
+        --node-key "$BOOT_NODE_KEY_PRIV" \
+        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --prometheus-external \
         --prometheus-port 9615 \
-        --rpc-cors all \
-        --allow-private-ipv4 \
-        --listen-addr /ip4/0.0.0.0/tcp/30333 \
-        --state-pruning archive \
-        --enable-log-reloading \
-        --max-runtime-instances 32 \
-        --rpc-max-connections 10000 \
         --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
 }
 
 start_process_exporter() {
-    if [ ! "$(docker ps -aq -f name=$container_process_exporter)" ]; then
+    if [ ! "$(docker ps -q -f name=$container_process_exporter)" ]; then
         echo "Starting the process_exporter..."
         docker pull ncabatoff/process-exporter:latest
         docker run -d --name "$container_process_exporter" \
@@ -88,7 +90,7 @@ start_process_exporter() {
 }
 
 start_promtail() {
-    if [ ! "$(docker ps -aq -f name=$container_promtail)" ]; then
+    if [ ! "$(docker ps -q -f name=$container_promtail)" ]; then
         echo "Starting the promtail..."
         docker pull grafana/promtail:latest
         docker run -d --name "$container_promtail" \
@@ -103,9 +105,10 @@ start_promtail() {
     fi
 }
 
+check_args
+check_chainspec
 maybe_cleanup
-
-start_node_safe
+start_node
 
 start_process_exporter
 start_promtail

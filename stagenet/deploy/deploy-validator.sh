@@ -7,7 +7,6 @@ source .env
 keys_file=$1
 docker_image=$2
 
-container_atleta="validator_stagenet"
 container_process_exporter="process-exporter"
 container_promtail="promtail"
 chainspec="./chainspec.json"

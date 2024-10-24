@@ -57,10 +57,11 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry"
         scp utils/telemetry/docker-compose.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/docker-compose.yml
         scp utils/telemetry/docker_conf.env ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/docker_conf.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry/{prometheus,loki,promtail}"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry/{prometheus,loki,promtail,nginx}"
         scp utils/telemetry/prometheus/prometheus.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/prometheus/prometheus.yml
         scp utils/telemetry/loki/loki-config.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/loki/loki-config.yml
         scp utils/telemetry/promtail/promtail-config.fill.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/promtail/promtail-config.yml
+        scp utils/telemetry/nginx/default.conf ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/nginx/default.conf
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3

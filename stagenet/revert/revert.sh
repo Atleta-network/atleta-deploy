@@ -16,7 +16,6 @@ set -u
 
 source ./config.env
 
-container_name="honest_worker"
 chainspec="./chainspec.json"
 
 check_chainspec() {
@@ -27,21 +26,21 @@ check_chainspec() {
 }
 
 maybe_cleanup() {
-    if [ "$(docker ps -q -f name=$container_name)" ]; then
+    if [ "$(docker ps -q -f name=$container_atleta)" ]; then
         echo "Stopping existing container..."
-        docker stop "$container_name"
+        docker stop "$container_atleta"
     fi
 
-    if [ "$(docker ps -aq -f name=$container_name)" ]; then
+    if [ "$(docker ps -aq -f name=$container_atleta)" ]; then
         echo "Removing existing container..."
-        docker rm "$container_name"
+        docker rm "$container_atleta"
     fi
 }
 
 revert() {
     echo "Reverting..."
     docker pull "$DOCKER_IMAGE"
-    docker run -d --name "$container_name" \
+    docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
         -v "$(pwd)/chain-data":"/chain-data" \
         --platform linux/amd64 \
