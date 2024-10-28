@@ -34,14 +34,11 @@ jobs:
 
     - name: Download chainspec
       run: |
-        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Prepare variables
       run: |
-        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> mainnet/deploy/bootnode-keys.env
-        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> mainnet/deploy/bootnode-keys.env
-        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> mainnet/deploy/bootnode-keys.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/deploy/bootnode.env
+        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_1_KEY_PRIV }}" >> mainnet/deploy/bootnode-keys.env
         echo "container_atleta=bootnode" >> mainnet/deploy/bootnode.env
 
     - name: Substitute environment variables
@@ -69,7 +66,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./deploy-bootnode.sh atletanetwork/atleta-node:mainnet-latest
+          ./deploy-bootnode.sh atletanetwork/atleta-node:stagenet-latest
 
   deploy_validators:
 
@@ -183,7 +180,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
       
     - name: Make Keys File
       run: |
@@ -198,9 +195,7 @@ jobs:
     - name: Prepare .env files
       run: |
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> mainnet/deploy/validator.env
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/deploy/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> mainnet/deploy/validator.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/deploy/validator.env
         echo "container_atleta=validator_mainnet" >> mainnet/deploy/validator.env
 
     - name: Copy Files to Server
@@ -223,7 +218,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./deploy-validator.sh mainnet.keys.env atletanetwork/atleta-node:mainnet-latest
+          ./deploy-validator.sh mainnet.keys.env atletanetwork/atleta-node:stagenet-latest
 
   deploy_arch_nodes:
 
@@ -324,7 +319,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Substitute environment variables
       env:
@@ -334,9 +329,7 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/deploy/arch-node.env
         echo "INDEX=${{ matrix.node_index }}" >> mainnet/deploy/arch-node.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/deploy/arch-node.env
         echo "container_atleta=arch_mainnet" >> mainnet/deploy/arch-node.env
 
     - name: Copy Files to Server
@@ -357,4 +350,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run-arch-node.sh atletanetwork/atleta-node:mainnet-latest
+          ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest
