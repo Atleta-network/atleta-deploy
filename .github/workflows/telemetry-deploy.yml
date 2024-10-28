@@ -1,0 +1,76 @@
+name: Deploy Telemetry for Stagenet
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy:
+
+    environment: stagenet
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install gettext
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets.TELEMETRY_HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.TELEMETRY_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    - name: Substitute environment variables
+      env:
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > utils/telemetry/promtail/promtail-config.fill.yml
+
+    - name: Generate Prometheus config
+      env:
+        VALIDATOR_1_HOST: ${{ secrets.VALIDATOR_1_HOST }}
+        VALIDATOR_2_HOST: ${{ secrets.VALIDATOR_2_HOST }}
+        VALIDATOR_3_HOST: ${{ secrets.VALIDATOR_3_HOST }}
+        VALIDATOR_4_HOST: ${{ secrets.VALIDATOR_4_HOST }}
+        VALIDATOR_5_HOST: ${{ secrets.VALIDATOR_5_HOST }}
+        VALIDATOR_6_HOST: ${{ secrets.VALIDATOR_6_HOST }}
+        BOOT_NODE_HOST: ${{ secrets.BOOT_NODE_HOST }}
+        TELEMETRY_HOST: ${{ secrets.TELEMETRY_HOST }}
+      run: |
+        cd utils/telemetry/prometheus
+        chmod +x generate_prometheus_config.sh
+        ./generate_prometheus_config.sh
+        envsubst < prometheus_template.yml > prometheus.yml 
+
+    - name: Generate config.env
+      run: |
+        touch utils/telemetry/docker_conf.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> utils/telemetry/docker_conf.env
+        echo "BOOT_NODE_HOST=${{ secrets.BOOT_NODE_HOST }}" >> utils/telemetry/docker_conf.env
+
+    - name: Copy Files to Server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry"
+        scp utils/telemetry/docker-compose.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/docker-compose.yml
+        scp utils/telemetry/docker_conf.env ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/docker_conf.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }} "mkdir -p /sportchain/telemetry/{prometheus,loki,promtail,nginx}"
+        scp utils/telemetry/prometheus/prometheus.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/prometheus/prometheus.yml
+        scp utils/telemetry/loki/loki-config.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/loki/loki-config.yml
+        scp utils/telemetry/promtail/promtail-config.fill.yml ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/promtail/promtail-config.yml
+        scp utils/telemetry/nginx/default.conf ${{ secrets.TELEMETRY_USER }}@${{ secrets.TELEMETRY_HOST }}:/sportchain/telemetry/nginx/default.conf
+
+    - name: SSH into Server and Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.TELEMETRY_HOST }}
+        username: ${{ secrets.TELEMETRY_USER }}
+        key: ${{ secrets.TELEMETRY_SSH_PRIVATE_KEY }}
+        script: |
+          cd /sportchain/telemetry
+          docker compose down
+          docker compose pull
+          docker compose --env-file docker_conf.env up --detach --build --remove-orphans

@@ -257,7 +257,7 @@ jobs:
 
     - name: Substitute environment variables
       env:
-        LOKI_HOST: ${{ secrets.LOKI_HOST }}
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
       run: |
         envsubst < utils/telemetry/promtail/promtail-config.yml > utils/telemetry/promtail/promtail-config.fill.yml      
 
