@@ -15,12 +15,12 @@ jobs:
           - node_index: 1
             host_key: BOOT_NODE_1_HOST
             user_key: BOOT_NODE_1_USER
-            priv_node_key: BOOT_NODE_1_NODE_KEY_PRIV
+            priv_node_key: BOOT_NODE_1_KEY_PRIV
 
           - node_index: 2
             host_key: BOOT_NODE_2_HOST
             user_key: BOOT_NODE_2_USER
-            priv_node_key: BOOT_NODE_2_NODE_KEY_PRIV
+            priv_node_key: BOOT_NODE_2_KEY_PRIV
     
     runs-on: ubuntu-latest
 
