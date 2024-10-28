@@ -18,7 +18,7 @@ maybe_cleanup_containers() {
     done
 }
 
-maybe_cleanup
+maybe_cleanup_containers
 
 sudo rm -rf /sportchain/atleta/
 
