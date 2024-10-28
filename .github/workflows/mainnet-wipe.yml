@@ -160,7 +160,7 @@ jobs:
         script: |
           cd /tmp
           ./wipe.sh
-          rm -f cleanup.env wipe.sh
+          # rm -f cleanup.env wipe.sh
 
   wipe_arch_nodes:
 
