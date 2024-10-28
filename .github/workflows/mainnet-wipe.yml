@@ -45,7 +45,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /tmp
-          ./wipe.sh
+          ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh
 
   wipe_validators:
@@ -150,7 +150,6 @@ jobs:
         echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
         echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
 
-
     - name: Copy Files to Server
       run: |
         scp mainnet/wipe/cleanup.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/tmp/cleanup.env
@@ -164,8 +163,8 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /tmp
-          ./wipe.sh
-          # rm -f cleanup.env wipe.sh
+          ./wipe.sh cleanup.env
+          rm -f cleanup.env wipe.sh
 
   wipe_arch_nodes:
 
@@ -269,5 +268,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /tmp
-          ./wipe.sh
+          ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh
