@@ -29,8 +29,8 @@ jobs:
     - name: Prepare variables
       run: |
         echo "container_atleta=bootnode" >> mainnet/wipe/cleanup.env
-        echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
-        echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
+        echo "container_process_exporter=process-exporter" >> mainnet/wipe/cleanup.env
+        echo "container_promtail=promtail" >> mainnet/wipe/cleanup.env
      
     - name: Copy files to the server
       run: |
@@ -147,8 +147,8 @@ jobs:
     - name: Prepare .env files
       run: |
         echo "container_atleta=validator_mainnet" >> mainnet/wipe/cleanup.env
-        echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
-        echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
+        echo "container_process_exporter=process-exporter" >> mainnet/wipe/cleanup.env
+        echo "container_promtail=promtail" >> mainnet/wipe/cleanup.env
 
     - name: Copy Files to Server
       run: |
@@ -252,8 +252,8 @@ jobs:
     - name: Prepare .env files
       run: |
         echo "container_atleta=arch_mainnet" >> mainnet/wipe/cleanup.env
-        echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
-        echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
+        echo "container_process_exporter=process-exporter" >> mainnet/wipe/cleanup.env
+        echo "container_promtail=promtail" >> mainnet/wipe/cleanup.env
 
     - name: Copy Files to Server
       run: |

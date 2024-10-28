@@ -8,6 +8,20 @@ jobs:
 
     environment: mainnet
 
+    strategy:
+      matrix:
+        include:
+
+          - node_index: 1
+            host_key: BOOT_NODE_1_HOST
+            user_key: BOOT_NODE_1_USER
+            priv_node_key: BOOT_NODE_1_NODE_KEY_PRIV
+
+          - node_index: 2
+            host_key: BOOT_NODE_2_HOST
+            user_key: BOOT_NODE_2_USER
+            priv_node_key: BOOT_NODE_2_NODE_KEY_PRIV
+    
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +34,7 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
-        ssh-keyscan ${{ secrets.BOOT_NODE_1_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
@@ -38,7 +52,7 @@ jobs:
 
     - name: Prepare variables
       run: |
-        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_1_KEY_PRIV }}" >> mainnet/deploy/bootnode-keys.env
+        echo "BOOT_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> mainnet/deploy/bootnode-keys.env
         echo "container_atleta=bootnode" >> mainnet/deploy/bootnode.env
 
     - name: Substitute environment variables
@@ -49,20 +63,20 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }} "mkdir -p /sportchain/atleta"
-        scp mainnet/deploy/deploy-bootnode.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/deploy-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/chainspec.json
-        scp mainnet/deploy/bootnode-keys.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/bootnode-keys.env
-        scp mainnet/deploy/bootnode.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
-        scp mainnet/deploy/promtail-config.yml ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
+        scp mainnet/deploy/deploy-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/deploy-bootnode.sh
+        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp mainnet/deploy/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/bootnode-keys.env
+        scp mainnet/deploy/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
+        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.BOOT_NODE_1_HOST }}
-        username: ${{ secrets.BOOT_NODE_1_USER }}
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
