@@ -4,7 +4,17 @@ set -ue
 
 source cleanup.env
 
+: "${container_atleta:?Variable container_atleta is required but not set}"
+: "${container_process_exporter:=}" 
+: "${container_promtail:=}"
+
 maybe_cleanup_containers() {
+
+    if [ -z "$(docker ps -aq -f name="$container_atleta")" ]; then
+        echo "Required container $container_atleta not found. Exiting..."
+        exit 1
+    fi
+
     containers=("$container_atleta" "$container_process_exporter" "$container_promtail")
 
     for container in "${containers[@]}"; do
