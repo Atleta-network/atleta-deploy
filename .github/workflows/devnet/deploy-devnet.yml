@@ -33,7 +33,7 @@ jobs:
     - name: Generate config.env
       run: |
         touch devnet/docker_conf.env
-        echo "DEVNET_HOST=${{ secrets.DEVNET_HOST }}" >> devnet/docker_conf.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> devnet/docker_conf.env
 
     - name: Copy Files to Server
       run: |
