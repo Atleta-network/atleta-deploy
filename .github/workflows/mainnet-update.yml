@@ -1,0 +1,360 @@
+name: Update Stagenet
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update_public_bootnode:
+
+    needs: 
+        - update_validators
+
+    strategy:
+      matrix:
+        include:
+
+          - node_index: 1
+            host_key: BOOT_NODE_1_HOST
+            user_key: BOOT_NODE_1_USER
+            priv_node_key: BOOT_NODE_1_KEY_PRIV
+
+          - node_index: 2
+            host_key: BOOT_NODE_2_HOST
+            user_key: BOOT_NODE_2_USER
+            priv_node_key: BOOT_NODE_2_KEY_PRIV
+
+      max-parallel: 1
+
+    environment: mainnet
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install jq wget
+    
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    # - name: Authenticate GitHub CLI and download latest release of chainspec
+    #   run: |
+    #     gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+    #     LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet-chainspec")) | .tagName' | sort -r | head -n 1)
+    #     echo "${LATEST_RELEASE}"
+    #     gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
+
+    - name: Download chainspec
+      run: |
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
+
+    - name: Prepare variables
+      run: |
+        echo "BOOT_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> mainnet/update/bootnode-keys.env
+        echo "container_atleta=bootnode" >> mainnet/update/bootnode.env
+
+    - name: Substitute environment variables
+      env:
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > mainnet/update/promtail-config.yml 
+        
+    - name: Copy files to the server
+      run: |
+        scp mainnet/update/update-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-bootnode.sh
+        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp mainnet/update/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/bootnode-keys.env
+        scp mainnet/update/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+
+    - name: Run bootnode
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /sportchain/atleta
+          ./update-bootnode.sh atletanetwork/atleta-node:stagenet-latest
+
+  update_validators:
+
+    runs-on: ubuntu-latest
+    environment: mainnet
+
+    strategy:
+      matrix:
+        include:
+
+          - node_index: 1
+            host_key: VALIDATOR_1_HOST
+            user_key: VALIDATOR_1_USER
+            priv_node_key: VALIDATOR_1_NODE_KEY_PRIV
+
+          - node_index: 2
+            host_key: VALIDATOR_2_HOST
+            user_key: VALIDATOR_2_USER
+            priv_node_key: VALIDATOR_2_NODE_KEY_PRIV
+
+          - node_index: 3
+            host_key: VALIDATOR_3_HOST
+            user_key: VALIDATOR_3_USER
+            priv_node_key: VALIDATOR_3_NODE_KEY_PRIV
+
+          - node_index: 4
+            host_key: VALIDATOR_4_HOST
+            user_key: VALIDATOR_4_USER
+            priv_node_key: VALIDATOR_4_NODE_KEY_PRIV
+
+          - node_index: 5
+            host_key: VALIDATOR_5_HOST
+            user_key: VALIDATOR_5_USER
+            priv_node_key: VALIDATOR_5_NODE_KEY_PRIV
+
+          - node_index: 6
+            host_key: VALIDATOR_6_HOST
+            user_key: VALIDATOR_6_USER
+            priv_node_key: VALIDATOR_6_NODE_KEY_PRIV
+
+          - node_index: 7
+            host_key: VALIDATOR_7_HOST
+            user_key: VALIDATOR_7_USER
+            priv_node_key: VALIDATOR_7_NODE_KEY_PRIV
+            
+          - node_index: 8
+            host_key: VALIDATOR_8_HOST
+            user_key: VALIDATOR_8_USER
+            priv_node_key: VALIDATOR_8_NODE_KEY_PRIV
+
+          - node_index: 9
+            host_key: VALIDATOR_9_HOST
+            user_key: VALIDATOR_9_USER
+            priv_node_key: VALIDATOR_9_NODE_KEY_PRIV
+
+          - node_index: 10
+            host_key: VALIDATOR_10_HOST
+            user_key: VALIDATOR_10_USER
+            priv_node_key: VALIDATOR_10_NODE_KEY_PRIV
+
+          - node_index: 11
+            host_key: VALIDATOR_11_HOST
+            user_key: VALIDATOR_11_USER
+            priv_node_key: VALIDATOR_11_NODE_KEY_PRIV
+
+          - node_index: 12
+            host_key: VALIDATOR_12_HOST
+            user_key: VALIDATOR_12_USER
+            priv_node_key: VALIDATOR_12_NODE_KEY_PRIV
+
+          - node_index: 13
+            host_key: VALIDATOR_13_HOST
+            user_key: VALIDATOR_13_USER
+            priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
+
+          - node_index: 14
+            host_key: VALIDATOR_14_HOST
+            user_key: VALIDATOR_14_USER
+            priv_node_key: VALIDATOR_14_NODE_KEY_PRIV
+
+          - node_index: 15
+            host_key: VALIDATOR_15_HOST
+            user_key: VALIDATOR_15_USER
+            priv_node_key: VALIDATOR_15_NODE_KEY_PRIV
+        
+      max-parallel: 1
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install jq wget
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    # - name: Authenticate GitHub CLI and download latest release of chainspec
+    #   run: |
+    #     gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+    #     LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+    #     echo "${LATEST_RELEASE}"
+    #     gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
+
+    - name: Download chainspec
+      run: |
+        mkdir chainspecs
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
+      
+    - name: Substitute environment variables
+      env:
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > mainnet/update/promtail-config.yml
+
+    - name: Prepare .env files
+      run: |
+        echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> mainnet/update/validator.env
+        echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/validator.env
+        echo "container_atleta=validator_mainnet" >> mainnet/update/validator.env
+
+    - name: Copy Files to Server
+      run: |
+        scp mainnet/update/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-validator.sh
+        scp mainnet/update/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/mainnet.keys.env
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp mainnet/update/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+
+    - name: SSH into Server and Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /sportchain/atleta
+          ./update-validator.sh atletanetwork/atleta-node:stagenet-latest
+
+  update_arch_nodes:
+
+    runs-on: ubuntu-latest
+    environment: mainnet
+
+    needs: 
+        - update_validators
+
+    strategy:
+      matrix:
+        include:
+
+          - node_index: 1
+            host_key: ARCH_1_HOST
+            user_key: ARCH_1_USER
+            priv_node_key: ARCH_1_NODE_KEY_PRIV
+
+          - node_index: 2
+            host_key: ARCH_2_HOST
+            user_key: ARCH_2_USER
+            priv_node_key: ARCH_2_NODE_KEY_PRIV
+
+          - node_index: 3
+            host_key: ARCH_3_HOST
+            user_key: ARCH_3_USER
+            priv_node_key: ARCH_3_NODE_KEY_PRIV
+
+          - node_index: 4
+            host_key: ARCH_4_HOST
+            user_key: ARCH_4_USER
+            priv_node_key: ARCH_4_NODE_KEY_PRIV
+
+          - node_index: 5
+            host_key: ARCH_5_HOST
+            user_key: ARCH_5_USER
+            priv_node_key: ARCH_5_NODE_KEY_PRIV
+
+          - node_index: 6
+            host_key: ARCH_6_HOST
+            user_key: ARCH_6_USER
+            priv_node_key: ARCH_6_NODE_KEY_PRIV
+
+          - node_index: 7
+            host_key: ARCH_7_HOST
+            user_key: ARCH_7_USER
+            priv_node_key: ARCH_7_NODE_KEY_PRIV
+
+          - node_index: 8
+            host_key: ARCH_8_HOST
+            user_key: ARCH_8_USER
+            priv_node_key: ARCH_8_NODE_KEY_PRIV
+
+          - node_index: 9
+            host_key: ARCH_9_HOST
+            user_key: ARCH_9_USER
+            priv_node_key: ARCH_9_NODE_KEY_PRIV
+
+          - node_index: 10
+            host_key: ARCH_10_HOST
+            user_key: ARCH_10_USER
+            priv_node_key: ARCH_10_NODE_KEY_PRIV
+
+          - node_index: 11
+            host_key: ARCH_11_HOST
+            user_key: ARCH_11_USER
+            priv_node_key: ARCH_11_NODE_KEY_PRIV
+
+          - node_index: 12
+            host_key: ARCH_12_HOST
+            user_key: ARCH_12_USER
+            priv_node_key: ARCH_12_NODE_KEY_PRIV
+        
+      max-parallel: 1
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install jq wget
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    # - name: Authenticate GitHub CLI and download latest release of chainspec
+    #   run: |
+    #     gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+    #     LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+    #     echo "${LATEST_RELEASE}"
+    #     gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
+
+    - name: Download chainspec
+      run: |
+        mkdir chainspecs
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
+
+    - name: Substitute environment variables
+      env:
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > mainnet/update/promtail-config.yml
+
+    - name: Prepare .env files
+      run: |
+        echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/arch-node.env
+        echo "container_atleta=arch_mainnet" >> mainnet/update/arch-node.env
+
+    - name: Copy Files to Server
+      run: |
+        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-arch-node.sh
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp mainnet/update/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+
+    - name: SSH into Server and Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /sportchain/atleta
+          ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest          
