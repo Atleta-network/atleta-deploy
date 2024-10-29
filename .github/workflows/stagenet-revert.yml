@@ -369,7 +369,7 @@ jobs:
         scp stagenet/deploy/run-rpc-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-rpc-node.sh
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
         scp stagenet/revert/rpc-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp stagenet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.ymll
+        scp stagenet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
