@@ -179,7 +179,7 @@ jobs:
           cd /sportchain/atleta
           ./update-validator.sh atletanetwork/atleta-node:stagenet-latest
 
-  update_rpc_nodes:
+  update_arch_nodes:
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -240,16 +240,16 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/update/rpc-node.env
-        echo "INDEX=${{ matrix.node_index }}" >> stagenet/update/rpc-node.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/update/rpc-node.env
-        echo "container_atleta=rpc_stagenet" >> stagenet/update/rpc-node.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/update/arch-node.env
+        echo "INDEX=${{ matrix.node_index }}" >> stagenet/update/arch-node.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/update/arch-node.env
+        echo "container_atleta=arch_stagenet" >> stagenet/update/arch-node.env
 
     - name: Copy Files to Server
       run: |
-        scp stagenet/deploy/run-rpc-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-rpc-node.sh
+        scp stagenet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-arch-node.sh
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp stagenet/update/rpc-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp stagenet/update/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
         scp stagenet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
@@ -261,4 +261,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run-rpc-node.sh atletanetwork/atleta-node:stagenet-latest          
+          ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest          
