@@ -48,7 +48,7 @@ jobs:
 
     - name: Download chainspec
       run: |
-        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Prepare variables
       run: |

@@ -9,6 +9,22 @@ jobs:
     needs: 
         - update_validators
 
+    strategy:
+      matrix:
+        include:
+
+          - node_index: 1
+            host_key: BOOT_NODE_1_HOST
+            user_key: BOOT_NODE_1_USER
+            priv_node_key: BOOT_NODE_1_KEY_PRIV
+
+          - node_index: 2
+            host_key: BOOT_NODE_2_HOST
+            user_key: BOOT_NODE_2_USER
+            priv_node_key: BOOT_NODE_2_KEY_PRIV
+
+      max-parallel: 1
+
     environment: mainnet
 
     runs-on: ubuntu-latest
@@ -23,7 +39,7 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
-        ssh-keyscan ${{ secrets.BOOT_NODE_1_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
@@ -37,14 +53,11 @@ jobs:
 
     - name: Download chainspec
       run: |
-        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Prepare variables
       run: |
-        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> mainnet/update/bootnode-keys.env
-        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> mainnet/update/bootnode-keys.env
-        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> mainnet/update/bootnode-keys.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/update/bootnode.env
+        echo "BOOT_NODE_KEY_PRIV=${{ secrets[matrix.priv_node_key] }}" >> mainnet/update/bootnode-keys.env
         echo "container_atleta=bootnode" >> mainnet/update/bootnode.env
 
     - name: Substitute environment variables
@@ -55,22 +68,22 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        scp mainnet/update/update-bootnode.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/update-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/chainspec.json
-        scp mainnet/update/bootnode-keys.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/bootnode-keys.env
-        scp mainnet/update/bootnode.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/.env
-        scp mainnet/update/promtail-config.yml ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        scp mainnet/update/update-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-bootnode.sh
+        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp mainnet/update/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/bootnode-keys.env
+        scp mainnet/update/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.BOOT_NODE_1_HOST }}
-        username: ${{ secrets.BOOT_NODE_1_USER }}
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./update-bootnode.sh atletanetwork/atleta-node:mainnet-latest
+          ./update-bootnode.sh atletanetwork/atleta-node:stagenet-latest
 
   update_validators:
 
@@ -183,7 +196,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
       
     - name: Substitute environment variables
       env:
@@ -194,9 +207,7 @@ jobs:
     - name: Prepare .env files
       run: |
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> mainnet/update/validator.env
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/update/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/validator.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/update/validator.env
         echo "container_atleta=validator_mainnet" >> mainnet/update/validator.env
 
     - name: Copy Files to Server
@@ -216,7 +227,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./update-validator.sh atletanetwork/atleta-node:mainnet-latest
+          ./update-validator.sh atletanetwork/atleta-node:stagenet-latest
 
   update_arch_nodes:
 
@@ -317,7 +328,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Substitute environment variables
       env:
@@ -327,9 +338,7 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/update/arch-node.env
         echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/arch-node.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/update/arch-node.env
         echo "container_atleta=arch_mainnet" >> mainnet/update/arch-node.env
 
     - name: Copy Files to Server
@@ -348,4 +357,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run-arch-node.sh atletanetwork/atleta-node:mainnet-latest          
+          ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest          
