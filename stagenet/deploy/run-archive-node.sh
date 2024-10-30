@@ -41,7 +41,7 @@ maybe_cleanup() {
 }
 
 start_node_safe() {
-    echo "Starting the validator node..."
+    echo "Starting the archive node..."
     docker pull "$docker_image"
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \

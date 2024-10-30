@@ -50,7 +50,7 @@ maybe_cleanup() {
 }
 
 start_node() {
-    echo "Starting the validator node..."
+    echo "Starting the bootnode node..."
     docker run -d --name "$container_atleta" \
         -v "$chainspec":"/chainspec.json" \
         -v "$(pwd)/chain-data":"/chain-data" \
