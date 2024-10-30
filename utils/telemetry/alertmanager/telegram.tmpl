@@ -1,0 +1,24 @@
+{{ define "telegram.default" }}
+    {{ range .Alerts }}
+    {{ if eq .Status "firing"}}&#x1F525<b>{{ .Status | toUpper }}</b>&#x1F525{{ else }}&#x2705<b>{{ .Status | toUpper }}</b>&#x2705{{ end }}
+    <b>{{ .Labels.alertname }}</b>
+    {{- if .Labels.severity }}
+    <b>Severity:</b> {{ .Labels.severity }}
+    {{- end }}
+    {{- if .Labels.host }}
+    <b>Host IP-address:</b> {{ .Labels.host }}
+    {{- end }}
+    {{- if .Labels.chain }}
+    <b>Chain:</b> {{ .Labels.chain }}
+    {{- end }}
+    {{- if .Annotations.message }}
+    {{ .Annotations.message }}
+    {{- end }}
+    {{- if .Annotations.summary }}
+    <b>Summary:</b> {{ .Annotations.summary }}
+    {{- end }}
+    {{- if .Annotations.description }}
+    <b>Description:</b> {{ .Annotations.description }}
+    {{- end }}
+    {{ end }}
+    {{ end }}

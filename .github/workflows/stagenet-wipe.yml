@@ -8,9 +8,16 @@ jobs:
 
     needs: 
       - wipe_validators
-      - wipe_rpc_nodes
+      - wipe_archive_nodes
 
     environment: stagenet
+
+    strategy:
+      matrix:
+        include:
+
+          - host_key: BOOT_NODE_1_HOST
+            user_key: BOOT_NODE_1_USER
 
     runs-on: ubuntu-latest
 
@@ -21,7 +28,7 @@ jobs:
       run: |
         mkdir -p ~/.ssh/
         touch ~/.ssh/known_hosts
-        ssh-keyscan ${{ secrets.BOOT_NODE_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key]  }} >> ~/.ssh/known_hosts
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
@@ -29,21 +36,23 @@ jobs:
     - name: Prepare variables
       run: |
         echo "container_atleta=bootnode" >> stagenet/wipe/cleanup.env
+        echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
+        echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
      
     - name: Copy files to the server
       run: |
-        scp stagenet/wipe/cleanup.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/tmp/cleanup.env 
-        scp stagenet/wipe/wipe.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/tmp/wipe.sh
+        scp stagenet/wipe/cleanup.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/tmp/cleanup.env 
+        scp stagenet/wipe/wipe.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/tmp/wipe.sh
 
     - name: Wipe bootnode
       uses: appleboy/ssh-action@v1.0.3
       with:
-        host: ${{ secrets.BOOT_NODE_HOST }}
-        username: ${{ secrets.BOOT_NODE_USER }}
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /tmp
-          ./wipe.sh
+          ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh
 
   wipe_validators:
@@ -55,41 +64,23 @@ jobs:
       matrix:
         include:
 
-          - node_index: 1
-            host_key: VALIDATOR_1_HOST
+          - host_key: VALIDATOR_1_HOST
             user_key: VALIDATOR_1_USER
-            priv_node_key: VALIDATOR_1_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_1_NODE_KEY_PUB
 
-          - node_index: 2
-            host_key: VALIDATOR_2_HOST
+          - host_key: VALIDATOR_2_HOST
             user_key: VALIDATOR_2_USER
-            priv_node_key: VALIDATOR_2_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_2_NODE_KEY_PUB
 
-          - node_index: 3
-            host_key: VALIDATOR_3_HOST
+          - host_key: VALIDATOR_3_HOST
             user_key: VALIDATOR_3_USER
-            priv_node_key: VALIDATOR_3_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_3_NODE_KEY_PUB
 
-          - node_index: 4
-            host_key: VALIDATOR_4_HOST
+          - host_key: VALIDATOR_4_HOST
             user_key: VALIDATOR_4_USER
-            priv_node_key: VALIDATOR_4_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_4_NODE_KEY_PUB
 
-          - node_index: 5
-            host_key: VALIDATOR_5_HOST
+          - host_key: VALIDATOR_5_HOST
             user_key: VALIDATOR_5_USER
-            priv_node_key: VALIDATOR_5_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_5_NODE_KEY_PUB
 
-          - node_index: 6
-            host_key: VALIDATOR_6_HOST
+          - host_key: VALIDATOR_6_HOST
             user_key: VALIDATOR_6_USER
-            priv_node_key: VALIDATOR_6_NODE_KEY_PRIV
-            pub_node_key: VALIDATOR_6_NODE_KEY_PUB
 
     steps:
     - uses: actions/checkout@v4
@@ -106,6 +97,8 @@ jobs:
     - name: Prepare .env files
       run: |
         echo "container_atleta=validator_stagenet" >> stagenet/wipe/cleanup.env
+        echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
+        echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
 
     - name: Copy Files to Server
       run: |
@@ -120,10 +113,10 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /tmp
-          ./wipe.sh
+          ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh
 
-  wipe_rpc_nodes:
+  wipe_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -132,20 +125,15 @@ jobs:
       matrix:
         include:
 
-          - node_index: 7
-            host_key: VALIDATOR_7_HOST
+          - host_key: VALIDATOR_7_HOST
             user_key: VALIDATOR_7_USER
-
-          - node_index: 8
-            host_key: VALIDATOR_8_HOST
+            
+          - host_key: VALIDATOR_8_HOST
             user_key: VALIDATOR_8_USER
 
-          - node_index: 9
-            host_key: VALIDATOR_9_HOST
+          - host_key: VALIDATOR_9_HOST
             user_key: VALIDATOR_9_USER
         
-      max-parallel: 1
-
     steps:
     - uses: actions/checkout@v4
 
@@ -160,7 +148,9 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "container_atleta=rpc_stagenet" >> stagenet/wipe/cleanup.env
+        echo "container_atleta=archive_stagenet" >> stagenet/wipe/cleanup.env
+        echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
+        echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
 
     - name: Copy Files to Server
       run: |
@@ -175,5 +165,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /tmp
-          ./wipe.sh
+          ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh

@@ -1,13 +1,21 @@
 global:
   scrape_interval: 15s
 
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets: ['alertmanager:9093']
+
+rule_files:
+  - rules.yaml
+
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
       - targets: ['localhost:9090']
-  - job_name: 'devnet'
+  - job_name: 'bootnode'
     static_configs:
-      - targets: ['${DEVNET_HOST}:9615', '${DEVNET_HOST}:9100', '${DEVNET_HOST}:9256']
+      - targets: ['${BOOT_NODE_HOST}:9615', '${BOOT_NODE_HOST}:9100', '${BOOT_NODE_HOST}:9256']
         labels:
-          host: '${DEVNET_HOST}'
+          host: '${BOOT_NODE_HOST}'
 

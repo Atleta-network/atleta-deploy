@@ -12,7 +12,7 @@ jobs:
 
     needs: 
       - stop_validators
-      - stop_rpc_nodes
+      - stop_archive_nodes
 
     steps:
     - uses: actions/checkout@v4
@@ -103,7 +103,7 @@ jobs:
           docker stop validator_stagenet
           docker rm validator_stagenet
 
-  stop_rpc_nodes:
+  stop_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -143,8 +143,8 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          docker stop rpc_stagenet
-          docker rm rpc_stagenet
+          docker stop archive_stagenet
+          docker rm archive_stagenet
 
 
   revert_public_bootnode:
@@ -306,7 +306,7 @@ jobs:
           cd /sportchain/atleta
           ./revert.sh
 
-  revert_rpc_nodes:
+  revert_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -359,17 +359,17 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/revert/rpc-node.env
-        echo "INDEX=${{ matrix.node_index }}" >> stagenet/revert/rpc-node.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/revert/rpc-node.env
-        echo "container_atleta=rpc_stagenet" >> stagenet/revert/rpc-node.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/revert/archive-node.env
+        echo "INDEX=${{ matrix.node_index }}" >> stagenet/revert/archive-node.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/revert/archive-node.env
+        echo "container_atleta=archive_stagenet" >> stagenet/revert/archive-node.env
 
     - name: Copy Files to Server
       run: |
-        scp stagenet/deploy/run-rpc-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-rpc-node.sh
+        scp stagenet/deploy/run-archive-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-archive-node.sh
         scp chainspecs/chain-spec.stagenet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp stagenet/revert/rpc-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp stagenet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.ymll
+        scp stagenet/revert/archive-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        scp stagenet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
