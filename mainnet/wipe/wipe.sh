@@ -23,6 +23,6 @@ maybe_cleanup_containers() {
 
 maybe_cleanup_containers
 
-sudo rm -rf /sportchain/atleta/
+sudo rm -rf /mnt/sportchain/atleta/
 
 echo "Done"

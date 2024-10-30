@@ -63,14 +63,14 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
-        scp mainnet/deploy/deploy-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/deploy-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/deploy/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/bootnode-keys.env
-        scp mainnet/deploy/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
-        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /mnt/sportchain/atleta"
+        scp mainnet/deploy/deploy-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/deploy-bootnode.sh
+        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/deploy/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/bootnode-keys.env
+        scp mainnet/deploy/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /mnt/sportchain/atleta/{promtail,process-exporter}"
+        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
@@ -79,7 +79,7 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./deploy-bootnode.sh atletanetwork/atleta-node:stagenet-latest
 
   deploy_validators:
@@ -214,15 +214,15 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
-        scp mainnet/deploy/add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/add-session-keys.sh
-        scp mainnet/deploy/deploy-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/deploy-validator.sh
-        scp mainnet/deploy/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/mainnet.keys.env
-        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/deploy/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
-        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /mnt/sportchain/atleta"
+        scp mainnet/deploy/add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/add-session-keys.sh
+        scp mainnet/deploy/deploy-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/deploy-validator.sh
+        scp mainnet/deploy/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/mainnet.keys.env
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/deploy/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /mnt/sportchain/atleta/{promtail,process-exporter}"
+        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -231,7 +231,7 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./deploy-validator.sh mainnet.keys.env atletanetwork/atleta-node:stagenet-latest
 
   deploy_arch_nodes:
@@ -348,13 +348,13 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
-        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-arch-node.sh
-        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/deploy/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
-        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /mnt/sportchain/atleta"
+        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-arch-node.sh
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/deploy/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /mnt/sportchain/atleta/{promtail,process-exporter}"
+        scp mainnet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -363,5 +363,5 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest

@@ -276,11 +276,11 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        scp mainnet/update/update-bootnode.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/update-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/chainspec.json
-        scp mainnet/revert/bootnode-keys.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/bootnode-keys.env
-        scp mainnet/revert/bootnode.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/.env
-        scp mainnet/revert/revert.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/sportchain/atleta/revert.sh
+        scp mainnet/update/update-bootnode.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/update-bootnode.sh
+        scp chain-spec.mainnet.json ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/revert/bootnode-keys.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/bootnode-keys.env
+        scp mainnet/revert/bootnode.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/.env
+        scp mainnet/revert/revert.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/revert.sh
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
@@ -289,7 +289,7 @@ jobs:
         username: ${{ secrets.BOOT_NODE_1_USER }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./revert.sh
 
   revert_validators:
@@ -416,11 +416,11 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        scp mainnet/update/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-validator.sh
-        scp mainnet/revert/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/mainnet.keys.env
-        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/revert/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        scp mainnet/update/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/update-validator.sh
+        scp mainnet/revert/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/mainnet.keys.env
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/revert/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -429,7 +429,7 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./revert.sh
 
   revert_arch_nodes:
@@ -540,10 +540,10 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-arch-node.sh
-        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/revert/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp mainnet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-arch-node.sh
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/revert/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp mainnet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -552,5 +552,5 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./revert.sh  

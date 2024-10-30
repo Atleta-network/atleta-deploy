@@ -68,12 +68,12 @@ jobs:
         
     - name: Copy files to the server
       run: |
-        scp mainnet/update/update-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/update/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/bootnode-keys.env
-        scp mainnet/update/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        scp mainnet/update/update-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/update-bootnode.sh
+        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/update/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/bootnode-keys.env
+        scp mainnet/update/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: Run bootnode
       uses: appleboy/ssh-action@v1.0.3
@@ -82,7 +82,7 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./update-bootnode.sh atletanetwork/atleta-node:stagenet-latest
 
   update_validators:
@@ -212,12 +212,12 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        scp mainnet/update/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/update-validator.sh
-        scp mainnet/update/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/mainnet.keys.env
-        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/update/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        scp mainnet/update/update-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/update-validator.sh
+        scp mainnet/update/mainnet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/mainnet.keys.env
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/update/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -226,7 +226,7 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./update-validator.sh atletanetwork/atleta-node:stagenet-latest
 
   update_arch_nodes:
@@ -343,11 +343,11 @@ jobs:
 
     - name: Copy Files to Server
       run: |
-        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/run-arch-node.sh
-        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
-        scp mainnet/update/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
-        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
-        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-arch-node.sh
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp mainnet/update/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
     - name: SSH into Server and Deploy
       uses: appleboy/ssh-action@v1.0.3
@@ -356,5 +356,5 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          cd /sportchain/atleta
+          cd /mnt/sportchain/atleta
           ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest          
