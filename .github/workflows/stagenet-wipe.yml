@@ -8,7 +8,7 @@ jobs:
 
     needs: 
       - wipe_validators
-      - wipe_arch_nodes
+      - wipe_archive_nodes
 
     environment: stagenet
 
@@ -116,7 +116,7 @@ jobs:
           ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh
 
-  wipe_arch_nodes:
+  wipe_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: stagenet
@@ -148,7 +148,7 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "container_atleta=arch_stagenet" >> stagenet/wipe/cleanup.env
+        echo "container_atleta=archive_stagenet" >> stagenet/wipe/cleanup.env
         echo "container_process_exporter=process-exporter" >> stagenet/wipe/cleanup.env
         echo "container_promtail=promtail" >> stagenet/wipe/cleanup.env
 
