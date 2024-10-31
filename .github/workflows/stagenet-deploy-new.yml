@@ -240,7 +240,6 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/deploy/archive-node.env
         echo "INDEX=${{ matrix.node_index }}" >> stagenet/deploy/archive-node.env
         echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/deploy/archive-node.env
         echo "container_atleta=archive_stagenet" >> stagenet/deploy/archive-node.env
@@ -263,5 +262,5 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./run-archive-node.sh atletanetwork/atleta-node:stagenet-latest
+          ./run-archive-node.sh atletanetwork/atleta-node:testnet-latest
 
