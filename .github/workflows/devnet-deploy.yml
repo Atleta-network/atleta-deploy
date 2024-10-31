@@ -23,12 +23,17 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         eval $(ssh-agent)
 
-    - name: Authenticate GitHub CLI and download latest release of chainspec
+    # - name: Authenticate GitHub CLI and download latest release of chainspec
+    #   run: |
+    #     gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+    #     LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("devnet-chainspec")) | .tagName' | sort -r | head -n 1)
+    #     echo "${LATEST_RELEASE}"
+    #     gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.devnet.json" --dir chainspecs
+
+    - name: Download chainspec
       run: |
-        gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
-        LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("devnet-chainspec")) | .tagName' | sort -r | head -n 1)
-        echo "${LATEST_RELEASE}"
-        gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.devnet.json" --dir chainspecs
+        mkdir chainspecs
+        wget -O chainspecs/chain-spec.devnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.devnet.json
 
     - name: Copy Files to Server
       run: |
