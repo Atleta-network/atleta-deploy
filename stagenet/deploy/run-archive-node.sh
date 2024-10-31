@@ -53,7 +53,6 @@ start_node_safe() {
         "$docker_image" \
         --chain "/chainspec.json" \
         --name "$validator" \
-        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --base-path /chain-data \
         --rpc-port 9944 \
         --rpc-methods=safe \
@@ -66,8 +65,7 @@ start_node_safe() {
         --state-pruning archive \
         --enable-log-reloading \
         --max-runtime-instances 32 \
-        --rpc-max-connections 10000 \
-        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
+        --rpc-max-connections 10000 
 }
 
 start_process_exporter() {
