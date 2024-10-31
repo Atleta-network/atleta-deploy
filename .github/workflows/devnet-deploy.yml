@@ -30,15 +30,9 @@ jobs:
         echo "${LATEST_RELEASE}"
         gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.devnet.json" --dir chainspecs
 
-    - name: Generate config.env
-      run: |
-        touch devnet/docker_conf.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> devnet/docker_conf.env
-
     - name: Copy Files to Server
       run: |
         scp devnet/docker-compose.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker-compose.yml
-        scp devnet/docker_conf.env ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/docker_conf.env
         scp chainspecs/chain-spec.devnet.json ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/chainspec.json
         ssh -o StrictHostKeyChecking=no ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }} "mkdir -p /sportchain/process-exporter"
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.DEVNET_USERNAME }}@${{ secrets.DEVNET_HOST }}:/sportchain/process-exporter/process-exporter.yml
@@ -53,4 +47,4 @@ jobs:
           cd /sportchain
           docker compose down
           docker compose pull
-          docker compose --env-file docker_conf.env up --detach --build --remove-orphans
+          docker compose up --detach

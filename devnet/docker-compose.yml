@@ -24,7 +24,6 @@ services:
       --allow-private-ipv4
       --listen-addr /ip4/0.0.0.0/tcp/30333
       --state-pruning archive
-      --telemetry-url "wss://${TELEMETRY_DOMAIN}/submit 1"
     ports:
       - "0.0.0.0:9944:9944/tcp"
       - "0.0.0.0:30333:30333/tcp"
@@ -52,8 +51,6 @@ services:
       --port 30333
       --rpc-port 9944
       --unsafe-force-node-key-generation
-      --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWHdiAxVd8uMQR1hGWXccidmfCwLqcMpGwR6QcTP6QRMuD
-      --telemetry-url "wss://${TELEMETRY_DOMAIN}/submit 1"
     networks:
       - sportchain-node-network
 
@@ -77,8 +74,6 @@ services:
       --port 30333
       --rpc-port 9944
       --unsafe-force-node-key-generation
-      --bootnodes /ip4/127.0.0.1/tcp/30333/p2p/12D3KooWHdiAxVd8uMQR1hGWXccidmfCwLqcMpGwR6QcTP6QRMuD
-      --telemetry-url "wss://${TELEMETRY_DOMAIN}/submit 1"
     networks:
       - sportchain-node-network
 
