@@ -1,0 +1,189 @@
+name: Deploy Stagenet New
+
+on:
+  workflow_dispatch:
+
+jobs:
+  deploy_public_bootnode:
+
+    environment: testnet-to-stagenet
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install jq wget
+    
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets.BOOT_NODE_HOST }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    # - name: Authenticate GitHub CLI and download latest release of chainspec
+    #   run: |
+    #     gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+    #     LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet-chainspec")) | .tagName' | sort -r | head -n 1)
+    #     echo "${LATEST_RELEASE}"
+    #     gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
+
+    - name: Download chainspec
+      run: |
+        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.testnet.json
+
+    - name: Prepare variables
+      run: |
+        echo "BOOT_NODE_KEY_PRIV=${{ secrets.BOOT_NODE_KEY_PRIV }}" >> stagenet/deploy/bootnode-keys.env
+        echo "BOOT_NODE_KEY_PUB=${{ secrets.BOOT_NODE_KEY_PUB }}" >> stagenet/deploy/bootnode-keys.env
+        echo "BOOT_NODE_P2P_ADDRESS=${{ secrets.BOOT_NODE_P2P_ADDRESS }}" >> stagenet/deploy/bootnode-keys.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/deploy/bootnode.env
+        echo "container_atleta=bootnode" >> stagenet/deploy/bootnode.env
+
+    - name: Substitute environment variables
+      env:
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/deploy/promtail-config.yml 
+        
+    - name: Copy files to the server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "sudo mkdir -p /sportchain/atleta"
+        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "sudo chown -R ${{ secrets.BOOT_NODE_USER }}:${{ secrets.BOOT_NODE_USER }} /sportchain"
+        scp stagenet/deploy/deploy-bootnode.sh ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/deploy-bootnode.sh
+        scp chain-spec.testnet.json ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/chainspec.json
+        scp stagenet/deploy/bootnode-keys.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/bootnode-keys.env
+        scp stagenet/deploy/bootnode.env ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
+        scp stagenet/deploy/promtail-config.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets.BOOT_NODE_USER }}@${{ secrets.BOOT_NODE_HOST }}:/sportchain/atleta/process-exporter/process-exporter.yml
+
+    - name: Run bootnode
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.BOOT_NODE_HOST }}
+        username: ${{ secrets.BOOT_NODE_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /sportchain/atleta
+          ./deploy-bootnode.sh atletanetwork/atleta-node:testnet-latest
+
+  deploy_validators:
+
+    needs: 
+      - deploy_public_bootnode
+
+    runs-on: ubuntu-latest
+    environment: testnet-to-stagenet
+
+    strategy:
+      matrix:
+        include:
+
+          - node_index: 1
+            host_key: VALIDATOR_1_HOST
+            user_key: VALIDATOR_1_USER
+            priv_node_key: VALIDATOR_1_NODE_KEY_PRIV
+            pub_node_key: VALIDATOR_1_NODE_KEY_PUB
+
+          - node_index: 2
+            host_key: VALIDATOR_2_HOST
+            user_key: VALIDATOR_2_USER
+            priv_node_key: VALIDATOR_2_NODE_KEY_PRIV
+            pub_node_key: VALIDATOR_2_NODE_KEY_PUB
+
+          - node_index: 3
+            host_key: VALIDATOR_3_HOST
+            user_key: VALIDATOR_3_USER
+            priv_node_key: VALIDATOR_3_NODE_KEY_PRIV
+            pub_node_key: VALIDATOR_3_NODE_KEY_PUB
+
+          - node_index: 4
+            host_key: VALIDATOR_4_HOST
+            user_key: VALIDATOR_4_USER
+            priv_node_key: VALIDATOR_4_NODE_KEY_PRIV
+            pub_node_key: VALIDATOR_4_NODE_KEY_PUB
+
+          - node_index: 5
+            host_key: VALIDATOR_5_HOST
+            user_key: VALIDATOR_5_USER
+            priv_node_key: VALIDATOR_5_NODE_KEY_PRIV
+            pub_node_key: VALIDATOR_5_NODE_KEY_PUB
+
+          - node_index: 6
+            host_key: VALIDATOR_6_HOST
+            user_key: VALIDATOR_6_USER
+            priv_node_key: VALIDATOR_6_NODE_KEY_PRIV
+            pub_node_key: VALIDATOR_6_NODE_KEY_PUB
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install system deps
+      run: sudo apt-get install jq wget
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh/
+        touch ~/.ssh/known_hosts
+        ssh-keyscan ${{ secrets[matrix.host_key] }} >> ~/.ssh/known_hosts
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        eval $(ssh-agent)
+
+    # - name: Authenticate GitHub CLI and download latest release of chainspec
+    #   run: |
+    #     gh auth login --with-token <<< "${{ secrets.ACCESS_TOKEN }}"
+    #     LATEST_RELEASE=$(gh release list --repo Atleta-network/atleta --json tagName,createdAt --jq '.[] | select(.tagName | startswith("testnet")) | .tagName' | sort -r | head -n 1)
+    #     echo "${LATEST_RELEASE}"
+    #     gh release download "${LATEST_RELEASE}" --repo Atleta-network/atleta --pattern "chain-spec.testnet.json" --dir chainspecs
+
+    - name: Download chainspec
+      run: |
+        mkdir chainspecs
+        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.testnet.json
+      
+    - name: Make Keys File
+      run: |
+        echo "${{ secrets.DEV_ACCOUNTS_KEYS }}" > stagenet/deploy/stagenet.keys.env
+
+    - name: Substitute environment variables
+      env:
+        LOKI_DOMAIN: ${{ secrets.LOKI_DOMAIN }}
+      run: |
+        envsubst < utils/telemetry/promtail/promtail-config.yml > stagenet/deploy/promtail-config.yml
+
+    - name: Prepare .env files
+      run: |
+        echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> stagenet/deploy/validator.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> stagenet/deploy/validator.env
+        echo "INDEX=${{ matrix.node_index }}" >> stagenet/deploy/validator.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> stagenet/deploy/validator.env
+        echo "container_atleta=validator_stagenet" >> stagenet/deploy/validator.env
+
+    - name: Copy Files to Server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta"
+        scp stagenet/deploy/add-session-keys.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/add-session-keys.sh
+        scp stagenet/deploy/deploy-validator.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/deploy-validator.sh
+        scp stagenet/deploy/stagenet.keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/stagenet.keys.env
+        scp chain-spec.testnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/chainspec.json
+        scp stagenet/deploy/validator.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/.env
+        ssh -o StrictHostKeyChecking=no ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }} "mkdir -p /sportchain/atleta/{promtail,process-exporter}"
+        scp stagenet/deploy/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/promtail/promtail-config.yml
+        scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/sportchain/atleta/process-exporter/process-exporter.yml
+
+    - name: SSH into Server and Deploy
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets[matrix.host_key] }}
+        username: ${{ secrets[matrix.user_key] }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        script: |
+          cd /sportchain/atleta
+          ./deploy-validator.sh stagenet.keys.env atletanetwork/atleta-node:testnet-latest
+
