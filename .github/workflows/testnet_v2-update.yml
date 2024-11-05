@@ -156,7 +156,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /sportchain/atleta
-          ./update-validator.sh testnet_v2.keys.env atletanetwork/atleta-node:testnet-latest
+          ./update-validator.sh atletanetwork/atleta-node:testnet-latest
 
   update_archive_nodes:
 
