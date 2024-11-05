@@ -67,10 +67,8 @@ start_node() {
         --state-pruning archive \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key "$BOOT_NODE_KEY_PRIV" \
-        --bootnodes "$BOOT_NODE_P2P_ADDRESS" \
         --prometheus-external \
         --prometheus-port 9615 \
-        --telemetry-url "wss://${TELEMETRY_HOST}/submit 1"
 }
 
 start_process_exporter() {
