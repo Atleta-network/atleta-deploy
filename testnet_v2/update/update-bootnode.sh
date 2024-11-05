@@ -68,7 +68,7 @@ start_node() {
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --node-key "$BOOT_NODE_KEY_PRIV" \
         --prometheus-external \
-        --prometheus-port 9615 \
+        --prometheus-port 9615
 }
 
 start_process_exporter() {
