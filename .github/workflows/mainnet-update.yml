@@ -53,6 +53,7 @@ jobs:
 
     - name: Download chainspec
       run: |
+        mkdir chainspecs
         wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Prepare variables
@@ -69,7 +70,7 @@ jobs:
     - name: Copy files to the server
       run: |
         scp mainnet/update/update-bootnode.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/update-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
         scp mainnet/update/bootnode-keys.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/bootnode-keys.env
         scp mainnet/update/bootnode.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
         scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
@@ -154,10 +155,10 @@ jobs:
             user_key: VALIDATOR_12_USER
             priv_node_key: VALIDATOR_12_NODE_KEY_PRIV
 
-          - node_index: 13
-            host_key: VALIDATOR_13_HOST
-            user_key: VALIDATOR_13_USER
-            priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
+          #- node_index: 13
+          #  host_key: VALIDATOR_13_HOST
+          #  user_key: VALIDATOR_13_USER
+          #  priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
 
           - node_index: 14
             host_key: VALIDATOR_14_HOST

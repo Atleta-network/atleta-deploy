@@ -103,8 +103,8 @@ jobs:
           - host_key: VALIDATOR_12_HOST
             user_key: VALIDATOR_12_USER
 
-          - host_key: VALIDATOR_13_HOST
-            user_key: VALIDATOR_13_USER
+          #- host_key: VALIDATOR_13_HOST
+          #  user_key: VALIDATOR_13_USER
 
           - host_key: VALIDATOR_14_HOST
             user_key: VALIDATOR_14_USER

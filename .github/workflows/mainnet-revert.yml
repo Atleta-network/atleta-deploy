@@ -105,10 +105,10 @@ jobs:
             user_key: VALIDATOR_12_USER
             priv_node_key: VALIDATOR_12_NODE_KEY_PRIV
 
-          - node_index: 13
-            host_key: VALIDATOR_13_HOST
-            user_key: VALIDATOR_13_USER
-            priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
+          #- node_index: 13
+          #  host_key: VALIDATOR_13_HOST
+          #  user_key: VALIDATOR_13_USER
+          #  priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
 
           - node_index: 14
             host_key: VALIDATOR_14_HOST
@@ -269,7 +269,8 @@ jobs:
 
     - name: Download chainspec
       run: |
-        wget https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        mkdir chainspecs
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Prepare variables
       run: |
@@ -282,7 +283,7 @@ jobs:
     - name: Copy files to the server
       run: |
         scp mainnet/update/update-bootnode.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/update-bootnode.sh
-        scp chain-spec.mainnet.json ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/chainspec.json
+        scp chainspecs/chain-spec.mainnet.json ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/chainspec.json
         scp mainnet/revert/bootnode-keys.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/bootnode-keys.env
         scp mainnet/revert/bootnode.env ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/.env
         scp mainnet/revert/revert.sh ${{ secrets.BOOT_NODE_1_USER }}@${{ secrets.BOOT_NODE_1_HOST }}:/mnt/sportchain/atleta/revert.sh
@@ -369,10 +370,10 @@ jobs:
           user_key: VALIDATOR_12_USER
           priv_node_key: VALIDATOR_12_NODE_KEY_PRIV
 
-        - node_index: 13
-          host_key: VALIDATOR_13_HOST
-          user_key: VALIDATOR_13_USER
-          priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
+        #- node_index: 13
+        #  host_key: VALIDATOR_13_HOST
+        #  user_key: VALIDATOR_13_USER
+        #  priv_node_key: VALIDATOR_13_NODE_KEY_PRIV
 
         - node_index: 14
           host_key: VALIDATOR_14_HOST
@@ -409,7 +410,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
       
     - name: Prepare .env files
       run: |
@@ -539,7 +540,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/mainnet/chainspecs/chain-spec.mainnet.json
+        wget -O chainspecs/chain-spec.mainnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.mainnet.json
 
     - name: Prepare .env files
       run: |
