@@ -311,8 +311,6 @@ jobs:
             host_key: ARCH_13_HOST
             user_key: ARCH_13_USER
             priv_node_key: ARCH_13_NODE_KEY_PRIV
-        
-      max-parallel: 1
 
     steps:
     - uses: actions/checkout@v4
