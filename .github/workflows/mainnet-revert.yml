@@ -12,7 +12,7 @@ jobs:
 
     needs: 
       - stop_validators
-      - stop_arch_nodes
+      - stop_archive_nodes
 
     steps:
     - uses: actions/checkout@v4
@@ -142,7 +142,7 @@ jobs:
           docker stop validator_mainnet
           docker rm validator_mainnet
 
-  stop_arch_nodes:
+  stop_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: mainnet
@@ -210,6 +210,11 @@ jobs:
             host_key: ARCH_12_HOST
             user_key: ARCH_12_USER
             priv_node_key: ARCH_12_NODE_KEY_PRIV
+
+          - node_index: 13
+            host_key: ARCH_13_HOST
+            user_key: ARCH_13_USER
+            priv_node_key: ARCH_13_NODE_KEY_PRIV
         
     steps:
     - uses: actions/checkout@v4
@@ -230,8 +235,8 @@ jobs:
         username: ${{ secrets[matrix.user_key] }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
-          docker stop arch_mainnet
-          docker rm arch_mainnet
+          docker stop archive
+          docker rm archive
 
 
   revert_public_bootnode:
@@ -412,7 +417,7 @@ jobs:
         echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/revert/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> mainnet/revert/validator.env
         echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/revert/validator.env
-        echo "container_atleta=validator_mainnet" >> mainnet/revert/validator.env
+        echo "container_atleta=validator" >> mainnet/revert/validator.env
 
     - name: Copy Files to Server
       run: |
@@ -432,7 +437,7 @@ jobs:
           cd /mnt/sportchain/atleta
           ./revert.sh
 
-  revert_arch_nodes:
+  revert_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: mainnet
@@ -503,6 +508,11 @@ jobs:
             host_key: ARCH_12_HOST
             user_key: ARCH_12_USER
             priv_node_key: ARCH_12_NODE_KEY_PRIV
+            
+          - node_index: 13
+            host_key: ARCH_13_HOST
+            user_key: ARCH_13_USER
+            priv_node_key: ARCH_13_NODE_KEY_PRIV
         
     steps:
     - uses: actions/checkout@v4
@@ -533,16 +543,16 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/revert/arch-node.env
-        echo "INDEX=${{ matrix.node_index }}" >> mainnet/revert/arch-node.env
-        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/revert/arch-node.env
-        echo "container_atleta=arch_mainnet" >> mainnet/revert/arch-node.env
+        echo "BOOT_NODE_P2P_ADDRESS=\"${{ secrets.BOOT_NODE_P2P_ADDRESS }}\"" >> mainnet/revert/archive-node.env
+        echo "INDEX=${{ matrix.node_index }}" >> mainnet/revert/archive-node.env
+        echo "TELEMETRY_DOMAIN=${{ secrets.TELEMETRY_DOMAIN }}" >> mainnet/revert/archive-node.env
+        echo "container_atleta=archive" >> mainnet/revert/archive-node.env
 
     - name: Copy Files to Server
       run: |
-        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-arch-node.sh
+        scp mainnet/deploy/run-archive-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-archive-node.sh
         scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
-        scp mainnet/revert/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp mainnet/revert/archive-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
         scp mainnet/revert/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
 
     - name: SSH into Server and Deploy

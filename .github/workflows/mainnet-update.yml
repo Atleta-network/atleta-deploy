@@ -208,7 +208,7 @@ jobs:
       run: |
         echo "VALIDATOR_KEY=${{ secrets[matrix.priv_node_key] }}" >> mainnet/update/validator.env
         echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/validator.env
-        echo "container_atleta=validator_mainnet" >> mainnet/update/validator.env
+        echo "container_atleta=validator" >> mainnet/update/validator.env
 
     - name: Copy Files to Server
       run: |
@@ -300,6 +300,11 @@ jobs:
             host_key: ARCH_12_HOST
             user_key: ARCH_12_USER
             priv_node_key: ARCH_12_NODE_KEY_PRIV
+
+          - node_index: 13
+            host_key: ARCH_13_HOST
+            user_key: ARCH_13_USER
+            priv_node_key: ARCH_13_NODE_KEY_PRIV
         
       max-parallel: 1
 
@@ -338,14 +343,14 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/arch-node.env
-        echo "container_atleta=arch_mainnet" >> mainnet/update/arch-node.env
+        echo "INDEX=${{ matrix.node_index }}" >> mainnet/update/archive-node.env
+        echo "container_atleta=archive" >> mainnet/update/archive-node.env
 
     - name: Copy Files to Server
       run: |
-        scp mainnet/deploy/run-arch-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-arch-node.sh
+        scp mainnet/deploy/run-archive-node.sh ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/run-archive-node.sh
         scp chainspecs/chain-spec.mainnet.json ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/chainspec.json
-        scp mainnet/update/arch-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
+        scp mainnet/update/archive-node.env ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/.env
         scp mainnet/update/promtail-config.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/promtail/promtail-config.yml
         scp utils/telemetry/process-exporter/process-exporter.yml ${{ secrets[matrix.user_key] }}@${{ secrets[matrix.host_key] }}:/mnt/sportchain/atleta/process-exporter/process-exporter.yml
 
@@ -357,4 +362,4 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
           cd /mnt/sportchain/atleta
-          ./run-arch-node.sh atletanetwork/atleta-node:stagenet-latest          
+          ./run-archive-node.sh atletanetwork/atleta-node:stagenet-latest          

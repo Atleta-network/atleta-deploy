@@ -8,7 +8,7 @@ jobs:
 
     needs: 
       - wipe_validators
-      - wipe_arch_nodes
+      - wipe_archive_nodes
 
     environment: mainnet
 
@@ -126,7 +126,7 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "container_atleta=validator_mainnet" >> mainnet/wipe/cleanup.env
+        echo "container_atleta=validator" >> mainnet/wipe/cleanup.env
         echo "container_process_exporter=process-exporter" >> mainnet/wipe/cleanup.env
         echo "container_promtail=promtail" >> mainnet/wipe/cleanup.env
 
@@ -146,7 +146,7 @@ jobs:
           ./wipe.sh cleanup.env
           rm -f cleanup.env wipe.sh
 
-  wipe_arch_nodes:
+  wipe_archive_nodes:
 
     runs-on: ubuntu-latest
     environment: mainnet
@@ -190,6 +190,9 @@ jobs:
 
           - host_key: ARCH_12_HOST
             user_key: ARCH_12_USER
+
+          - host_key: ARCH_13_HOST
+            user_key: ARCH_13_USER
         
       max-parallel: 1
 
@@ -207,7 +210,7 @@ jobs:
 
     - name: Prepare .env files
       run: |
-        echo "container_atleta=arch_mainnet" >> mainnet/wipe/cleanup.env
+        echo "container_atleta=archive" >> mainnet/wipe/cleanup.env
         echo "container_process_exporter=process-exporter" >> mainnet/wipe/cleanup.env
         echo "container_promtail=promtail" >> mainnet/wipe/cleanup.env
 
