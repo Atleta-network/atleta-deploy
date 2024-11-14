@@ -198,7 +198,11 @@ jobs:
 
           - node_index: 9
             host_key: VALIDATOR_9_HOST
-            user_key: VALIDATOR_9_USER     
+            user_key: VALIDATOR_9_USER    
+            
+          - node_index: 10
+            host_key: VALIDATOR_10_HOST
+            user_key: VALIDATOR_10_USER
 
     steps:
     - uses: actions/checkout@v4
