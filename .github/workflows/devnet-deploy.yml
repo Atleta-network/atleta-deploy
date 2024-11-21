@@ -33,7 +33,7 @@ jobs:
     - name: Download chainspec
       run: |
         mkdir chainspecs
-        wget -O chainspecs/chain-spec.devnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/devnet/chainspecs/chain-spec.devnet.json
+        wget -O chainspecs/chain-spec.devnet.json https://raw.githubusercontent.com/Atleta-network/atleta/refs/heads/feature/180-update-chainspecs/chainspecs/chain-spec.devnet.json
 
     - name: Copy Files to Server
       run: |
