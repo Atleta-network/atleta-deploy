@@ -71,15 +71,6 @@ services:
     networks:
       - sportchain-node-network
 
-  node_exporter:
-    image: prom/node-exporter:latest
-    container_name: node_exporter
-    restart: always
-    ports:
-      - "9100:9100"
-    networks:
-      - sportchain-node-network
-
   process_exporter:
     image: ncabatoff/process-exporter:latest
     container_name: process_exporter
