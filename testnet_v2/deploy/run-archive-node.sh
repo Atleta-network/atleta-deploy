@@ -63,8 +63,6 @@ start_node_safe() {
         --allow-private-ipv4 \
         --listen-addr /ip4/0.0.0.0/tcp/30333 \
         --state-pruning archive \
-        --enable-log-reloading \
-        --max-runtime-instances 32 \
         --rpc-max-connections 10000 
 }
 
